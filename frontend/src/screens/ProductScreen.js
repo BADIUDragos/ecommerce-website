@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams, useNavigate, createSearchParams } from "react-router-dom";
+import { Link, useParams, useNavigate, useLocation, createSearchParams } from "react-router-dom";
 import {
   Row,
   Col,
@@ -115,17 +115,6 @@ function ProductScreen() {
                     </Row>
                   </ListGroup.Item>
                 )}
-
-                <ListGroup.Item>
-                  <Button
-                    onClick={addToCartHandler}
-                    className="btn-block"
-                    disabled={product.countInStock === 0}
-                    type="button"
-                  >
-                    ADD TO CART
-                  </Button>
-                </ListGroup.Item>
               </ListGroup>
             </Card>
           </Col>
