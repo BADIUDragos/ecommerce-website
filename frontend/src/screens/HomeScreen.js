@@ -19,9 +19,9 @@ function HomeScreen() {
     <div>
       <h1>Latest Products</h1>
       {loading ? (
-        <Loader/>
+        <Loader />
       ) : error ? (
-        <Message variant='danger'>{error}</Message>
+        <Message variant="danger">{error}</Message>
       ) : (
         <Row>
           {products.map((product) => (
