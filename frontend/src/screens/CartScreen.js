@@ -7,11 +7,11 @@ import {
   ListGroup,
   Image,
   Form,
-  Button,
+  Button, 
   Card,
 } from "react-bootstrap";
 import Message from "../components/Message";
-import { addToCart } from "../actions/cartActions";
+import { addToCart, removeFromCart } from "../actions/cartActions";
 
 function CartScreen() {
   const { id } = useParams();
@@ -31,7 +31,7 @@ function CartScreen() {
   }, [dispatch, id, qty]);
 
   const removeFromCartHandler = (id) => {
-    console.log('remove:', id)
+    dispatch(removeFromCart(id))
   }
 
   const checkoutHandler = () => {
@@ -58,7 +58,7 @@ function CartScreen() {
                     <Image src={item.image} alt={item.name} fluid rounded />
                   </Col>
                   <Col md={3}>
-                    <Link to={`/product/$item.product`}>{item.name}</Link>
+                    <Link to={`/product/${item.product}`}>{item.name}</Link>
                   </Col>
                   <Col md={2}>${item.price}</Col>
                   <Col md={3}>

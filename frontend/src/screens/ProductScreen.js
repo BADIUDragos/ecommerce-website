@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams, useNavigate, useLocation, createSearchParams } from "react-router-dom";
+import { Link, useParams, useNavigate, createSearchParams } from "react-router-dom";
 import {
   Row,
   Col,
@@ -14,6 +14,7 @@ import Rating from "../components/Rating";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { listProductDetails } from "../actions/productActions";
+import { addToCart } from "../actions/cartActions";
 
 function ProductScreen() {
   
@@ -23,7 +24,6 @@ function ProductScreen() {
   const dispatch = useDispatch();
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
-  const navigate = useNavigate()
 
   useEffect(() => {
     dispatch(listProductDetails(id));
@@ -32,10 +32,7 @@ function ProductScreen() {
   const [qty, setQty] = useState(1)
 
   const addToCartHandler = () => {
-    navigate({
-      pathname: `/cart/${id}`,
-      search: `${createSearchParams(qty)}`
-    })
+    dispatch(addToCart(id, qty));
   }
 
   return (
@@ -119,7 +116,7 @@ function ProductScreen() {
                 <ListGroup.Item>
                   <Button
                     onClick={addToCartHandler}
-                    className="btn-block"
+                    className="btn-block w-100"
                     disabled={product.countInStock === 0}
                     type="button"
                   >
