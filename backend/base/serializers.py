@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
         return name
 
     def get__id(self, obj):
-        _id = obj._id
+        _id = obj.id
         return _id
 
     def get_isAdmin(self, obj):

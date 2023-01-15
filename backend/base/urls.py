@@ -6,6 +6,7 @@ urlpatterns = [
 
     path('', views.getRoutes, name="routes"),
 
+    path('users', views.getUsers, name='users'),
     path('users/profile', views.getUserProfile, name='users-profile'),
 
     path('products/', views.getProducts, name='products'),
