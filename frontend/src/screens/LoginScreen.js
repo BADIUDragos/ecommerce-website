@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
@@ -11,10 +11,25 @@ function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const dispatch = useDispatch()
+
+  const location = useLocation()
+  const navigate = useNavigate()
+  const redirect = location.search ? location.search.split('=')[1] : '/'
+
+  const userLogin = useSelector(state => state.userLogin)
+  const {error, loading, userInfo} = userLogin
+
+  useEffect(() => {
+    if (userInfo){
+      navigate(redirect)
+    }
+  }, [navigate, userInfo, redirect])
+
   const submitHandler = (e) => {
     e.preventDefault()
-    console.log('submitted')
-}
+    dispatch(login(email, password))
+  }
 
   return <FormContainer>
     <h1>Sign In</h1>
@@ -43,7 +58,8 @@ function LoginScreen() {
     <Row className="py-3">
       <Col>
         New Customer? <Link
-        to={redirect ? `register?redirect=${redirect}` : '/register'}>
+        to={redirect ? `/register?redirect=${redirect}` : '/register'}>
+        Register
           
         </Link>
 
