@@ -44,7 +44,7 @@ function RegisterScreen() {
       {loading && <Loader />}
 
       <Form onSubmit={submitHandler}>
-      <Form.Group controlId="name">
+        <Form.Group controlId="name">
           <Form.Label>Name</Form.Label>
           <Form.Control
             required
@@ -88,7 +88,7 @@ function RegisterScreen() {
           ></Form.Control>
         </Form.Group>
 
-        <Button type="submit" variant="primary" className="btn-block w-100">
+        <Button type="submit" variant="primary" className="btn-block w-100 mt-3">
           Register
         </Button>
       </Form>
