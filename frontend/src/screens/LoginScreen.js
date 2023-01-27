@@ -57,7 +57,7 @@ function LoginScreen() {
             onChange={(e) => setPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
-        <Button type="submit" variant="primary" className="btn-block w-100">
+        <Button type="submit" variant="primary" className="btn-block w-100 mt-3">
           Sign In
         </Button>
       </Form>
