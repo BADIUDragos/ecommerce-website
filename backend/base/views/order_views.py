@@ -8,7 +8,7 @@ from base.serializers import ProductSerializer, OrderSerializer
 
 
 @api_view(['POST'])
-@permission_classes(['IsAuthenticated'])
+@permission_classes([IsAuthenticated])
 def addOrderItems(request):
     user = request.user
     data = request.data
@@ -27,29 +27,29 @@ def addOrderItems(request):
             totalPrice = data['totalPrice']
         )
     
-    shipping = ShippingAddress.objects.create(
-        order = order,
-        address = data['shippingAddress']['address'],
-        city = data['shippingAddress']['city'],
-        postalCode = data['shippingAddress']['postalCode'],
-        country = 'Canada'
-    )
-
-    for i in orderItems:
-        product = Product.objects.get(_id=i['product'])
-
-        item = OrderItem.objects.create(
-            product = product,
+        shipping = ShippingAddress.objects.create(
             order = order,
-            name = product.name,
-            qty = i['qty'],
-            price = i['price'],
-            image = product.image.url,
+            address = data['shippingAddress']['address'],
+            city = data['shippingAddress']['city'],
+            postalCode = data['shippingAddress']['postalCode'],
+            country = 'Canada'
         )
 
-        product.countInStock -= item.qty
-        product.save()
+        for i in orderItems:
+            product = Product.objects.get(_id=i['product'])
 
-    serializer = OrderSerializer(order, many=False)
+            item = OrderItem.objects.create(
+                product = product,
+                order = order,
+                name = product.name,
+                qty = i['qty'],
+                price = i['price'],
+                image = product.image.url,
+            )
 
-    return Response(serializer.data)
+            product.countInStock -= int(item.qty)
+            product.save()
+
+            serializer = OrderSerializer(order, many=False)
+
+        return Response(serializer.data)
