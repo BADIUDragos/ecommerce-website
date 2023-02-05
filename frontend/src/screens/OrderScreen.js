@@ -6,7 +6,7 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { getOrderDetails } from "../actions/orderActions";
 
-function PlaceOrderScreen() {
+function OrderScreen() {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -15,10 +15,6 @@ function PlaceOrderScreen() {
 
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
-
-  if(!loading && !error){
-    order.itemsPrice = order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2)
-  }
 
   useEffect(() => {
     if(!order || order._id !== Number(id)){
@@ -132,4 +128,4 @@ function PlaceOrderScreen() {
   );
 }
 
-export default PlaceOrderScreen;
+export default OrderScreen;
