@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { getOrderDetails } from "../actions/orderActions";
+import moment from 'moment'
 
 function OrderScreen() {
   const { id } = useParams();
@@ -14,7 +15,6 @@ function OrderScreen() {
   const { order, error, loading } = orderDetails;
 
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.cart);
 
   useEffect(() => {
     if(!order || order._id !== Number(id)){
@@ -34,6 +34,8 @@ function OrderScreen() {
           <ListGroup variant="flush">
             <ListGroup.Item>
               <h2>Shipping</h2>
+              <p><strong>Name: </strong> {order.user.name} </p>
+              <p><strong>Email: </strong> {order.user.email} </p>
               <p>
                 <strong>Shipping:</strong>
                 {order.shippingAddress.address}, {order.shippingAddress.city},
@@ -41,6 +43,10 @@ function OrderScreen() {
                 {order.shippingAddress.postalCode},{"   "}
                 {"Canada"}
               </p>
+
+              {order.isDelivered ? (
+                <Message variant='success'>Delivered on {moment(order.deliveredAt).format('MMMM Do, YYYY')}</Message>
+              ) : <Message variant='warning'>Not delivered</Message>}
             </ListGroup.Item>
             <ListGroup.Item>
               <h2>Payment Method</h2>
@@ -48,6 +54,11 @@ function OrderScreen() {
                 <strong>Method: </strong>
                 {order.paymentMethod}
               </p>
+
+              {order.isPaid ? (
+                <Message variant='success'>Paid on {moment(order.paidAt).format('MMMM Do, YYYY')}</Message>
+              ) : <Message variant='warning'>Not paid</Message>}
+
             </ListGroup.Item>
             <ListGroup.Item>
               <h2>Order Items</h2>
@@ -95,7 +106,7 @@ function OrderScreen() {
 
               <ListGroup.Item>
                 <Row>
-                  <Col>Item:</Col>
+                  <Col>Items:</Col>
                   <Col>${order.itemsPrice}</Col>
                 </Row>
               </ListGroup.Item>
