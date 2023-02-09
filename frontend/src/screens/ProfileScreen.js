@@ -116,7 +116,7 @@ function ProfileScreen() {
             ></Form.Control>
           </Form.Group>
 
-          <Button type="submit" variant="primary" className="btn-block w-100">
+          <Button type="submit" variant="primary" className="btn-block w-100 mt-3">
             Update
           </Button>
         </Form>
