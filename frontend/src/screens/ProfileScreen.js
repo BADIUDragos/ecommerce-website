@@ -143,7 +143,7 @@ function ProfileScreen() {
 
             <tbody>
               {orders.map(order => (
-                <tr>
+                <tr key={order.id}>
                   <td>{order._id}</td>
                   <td>{moment(order.createdAt).format("MMMM Do, YYYY")}</td>
                   <td>${order.totalPrice}</td>
