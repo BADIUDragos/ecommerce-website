@@ -23,6 +23,11 @@ import {
   USER_LIST_SUCCESS,
   USER_LIST_FAIL,
   USER_LIST_RESET,
+
+  USER_DELETE_REQUEST,
+  USER_DELETE_SUCCESS,
+  USER_DELETE_FAIL,
+
 } from "../constants/userConstants";
 
 import { ORDER_LIST_MY_RESET } from '../constants/orderConstants'
@@ -216,15 +221,47 @@ export const listUsers = () => async (dispatchEvent, getState) => {
       payload: data,
     });
 
-    dispatchEvent({
-      type: USER_LIST_SUCCESS,
-      payload: data,
-    });
-
-    localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
     dispatchEvent({
       type: USER_LIST_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const deleteUser = (id) => async (dispatchEvent, getState) => {
+  try {
+    dispatchEvent({
+      type: USER_DELETE_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.delete(
+      `/api/users/delete/${id}`,
+      config
+    );
+
+    dispatchEvent({
+      type: USER_DELETE_SUCCESS,
+      payload: data,
+    });
+
+  } catch (error) {
+    dispatchEvent({
+      type: USER_DELETE_FAIL,
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail
