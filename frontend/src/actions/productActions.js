@@ -16,6 +16,9 @@ import {
   PRODUCT_UPDATE_SUCCESS,
   PRODUCT_UPDATE_FAIL,
   PRODUCT_UPDATE_RESET,
+  PRODUCT_IMAGE_UPLOAD_REQUEST,
+  PRODUCT_IMAGE_UPLOAD_SUCCESS,
+  PRODUCT_IMAGE_UPLOAD_FAIL,
 } from "../constants/productConstants";
 
 export const listProducts = () => async (dispatchEvent) => {
@@ -168,5 +171,38 @@ export const updateProduct = (product) => async (dispatchEvent, getState) => {
           ? error.response.data.detail
           : error.message,
     });
+  }
+};
+
+export const uploadProductImage = (file, productId) => async (dispatch) => {
+  try {
+      
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("product_id", productId);
+
+      dispatch({ type: PRODUCT_IMAGE_UPLOAD_REQUEST });
+
+      const config = {
+          headers: {
+              "Content-Type": "multipart/form-data",
+          },
+      };
+
+      const { data } = await axios.post(
+          "/api/products/upload/",
+          formData,
+          config
+      );
+
+      dispatch({
+          type: PRODUCT_IMAGE_UPLOAD_SUCCESS,
+          payload: data,
+      });
+  } catch (error) {
+      dispatch({
+          type: PRODUCT_IMAGE_UPLOAD_FAIL,
+          payload: error.response,
+      });
   }
 };

@@ -16,6 +16,9 @@ import {
   PRODUCT_UPDATE_SUCCESS,
   PRODUCT_UPDATE_FAIL,
   PRODUCT_UPDATE_RESET,
+  PRODUCT_IMAGE_UPLOAD_REQUEST,
+  PRODUCT_IMAGE_UPLOAD_SUCCESS,
+  PRODUCT_IMAGE_UPLOAD_FAIL,
 } from "../constants/productConstants";
 
 export const productListReducer = (state = { products: [] }, action) => {
@@ -92,5 +95,21 @@ export const productUpdateReducer = (state = { product: {} }, action) => {
 
     default:
       return state;
+  }
+};
+
+export const productImageUploadReducer = (state = { }, action) => {
+  switch (action.type) {
+      case PRODUCT_IMAGE_UPLOAD_REQUEST:
+          return { loading: true };
+
+      case PRODUCT_IMAGE_UPLOAD_SUCCESS:
+          return { loading: false, success: true };
+
+      case PRODUCT_IMAGE_UPLOAD_FAIL:
+          return { loading: false, error: action.payload };
+
+      default:
+          return state;
   }
 };
