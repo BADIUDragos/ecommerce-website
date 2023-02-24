@@ -25,6 +25,9 @@ function PlaceOrderScreen() {
   if(!cart.paymentMethod){
     navigate('/payment')
   }
+  if(cart.cartItems.length === 0){
+    navigate('/')
+  }
 
   useEffect(() => {
     if(success){
