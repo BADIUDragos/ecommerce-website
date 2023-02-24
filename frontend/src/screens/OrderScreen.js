@@ -4,10 +4,10 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { getOrderDetails, payOrder } from "../actions/orderActions";
+import { getOrderDetails, payOrder, markOrderAsShipped, markOrderAsDelivered } from "../actions/orderActions";
 import moment from "moment";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import { ORDER_PAY_RESET } from '../constants/orderConstants'
+import { ORDER_PAY_RESET, ORDER_SHIPPED_RESET, ORDER_DELIVERED_RESET } from '../constants/orderConstants'
 
 function OrderScreen() {
   const currency = "CAD";
@@ -15,8 +15,17 @@ function OrderScreen() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, error, loading } = orderDetails;
+
+  const orderShipped = useSelector((state) => state.orderShipped);
+  const { loading: loadingShipped, error: errorShipped, success: successShipped } = orderShipped;
+
+  const orderDelivered = useSelector((state) => state.orderDelivered);
+  const { loading: loadingDelivered, error: errorDelivered, success: successDelivered } = orderDelivered;
 
   const orderPay = useSelector(state => state.orderPay)
   const {success: successPay} = orderPay
@@ -24,14 +33,28 @@ function OrderScreen() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!order || successPay || order._id !== Number(id)) {
+    if(!userInfo){
+      navigate('/')
+    }
+
+    if (!order || successPay || order._id !== Number(id) || successShipped || successDelivered ) {
       dispatch({type:ORDER_PAY_RESET})
+      dispatch({type:ORDER_SHIPPED_RESET})
+      dispatch({type:ORDER_DELIVERED_RESET})
       dispatch(getOrderDetails(id));
     }
-  }, [order, id, dispatch, successPay]);
+  }, [order, id, dispatch, successPay, successShipped, successDelivered]);
 
   const successPaymentHandler = (paymentResult) => {
     dispatch(payOrder(id, paymentResult))
+  }
+
+  const markAsShippedHandler = () => {
+    dispatch(markOrderAsShipped(id))
+  }
+
+  const markAsDeliveredHandler = () => {
+    dispatch(markOrderAsDelivered(id))
   }
 
   return loading ? (
@@ -60,13 +83,21 @@ function OrderScreen() {
                 {"Canada"}
               </p>
 
+              {order.isShipped ? (
+                <Message variant="success">
+                  Shipped on{" "}
+                  {moment(order.shippedAt).format("MMMM Do, YYYY")}
+                </Message>
+              ) : (
+                <Message variant="warning">Not Shipped</Message>
+              )}
               {order.isDelivered ? (
                 <Message variant="success">
                   Delivered on{" "}
                   {moment(order.deliveredAt).format("MMMM Do, YYYY")}
                 </Message>
               ) : (
-                <Message variant="warning">Not delivered</Message>
+                <Message variant="warning">Not Delivered</Message>
               )}
             </ListGroup.Item>
             <ListGroup.Item>
@@ -156,7 +187,7 @@ function OrderScreen() {
                 </Row>
               </ListGroup.Item>
               
-              {!order.isPaid ? 
+              {!order.isPaid && !userInfo.isAdmin? 
               <ListGroup.Item>
                 <PayPalScriptProvider
                   options={{
@@ -193,6 +224,28 @@ function OrderScreen() {
 
               
             </ListGroup>
+            
+            {userInfo && userInfo.isAdmin && order.isPaid &&  (
+              <ListGroup>
+                <ListGroup.Item>
+                  <Button 
+                    type="button"
+                    className="btn btn-block w-100"
+                    onClick={markAsShippedHandler} >
+                    Mark As Shipped
+                  </Button>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Button 
+                    type="button"
+                    className="btn btn-block w-100"
+                    onClick={markAsDeliveredHandler} >
+                    Mark As Delivered
+                  </Button>
+                </ListGroup.Item>
+              </ListGroup>
+            )}
+
           </Card>
         </Col>
       </Row>

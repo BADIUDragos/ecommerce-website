@@ -43,6 +43,7 @@ function OrderListScreen() {
               <th>DATE</th>
               <th>TOTAL</th>
               <th>PAID</th>
+              <th>SHIPPED</th>
               <th>DELIVERED</th>
               <th></th>
             </tr>
@@ -58,6 +59,13 @@ function OrderListScreen() {
                 <td>
                   {order.isPaid ? (
                     moment(order.paidAt).format("MMMM Do, YYYY")
+                  ) : (
+                    <i className="fas fa-times" style={{ color: "red" }}></i>
+                  )}
+                </td>
+                <td>
+                  {order.isShipped ? (
+                    moment(order.shippedAt).format("MMMM Do, YYYY")
                   ) : (
                     <i className="fas fa-times" style={{ color: "red" }}></i>
                   )}
