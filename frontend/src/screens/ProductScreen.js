@@ -213,6 +213,7 @@ function ProductScreen() {
                       disabled={loadingProductReview}
                       type='submit'
                       variant="primary"
+                      className="mt-3"
                     >
                       Submit
                     </Button>
