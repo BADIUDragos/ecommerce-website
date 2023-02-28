@@ -1,13 +1,17 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
+import Badge from 'react-bootstrap/Badge'
 import { LinkContainer } from "react-router-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { logout } from '../actions/userActions'
 
 function Header() {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+
+  const cart = useSelector((state) => state.cart);
+  const { cartItems } = cart;
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -30,7 +34,7 @@ function Header() {
             <Nav className="mr-auto">
               <LinkContainer to="/cart">
                 <Nav.Link>
-                  <i className="fas fa-shopping-cart"></i>Cart
+                  <i className="fas fa-shopping-cart"><Badge pill className="bg-danger">{Object.keys(cartItems).length}</Badge></i>
                 </Nav.Link>
               </LinkContainer>
 

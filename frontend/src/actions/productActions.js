@@ -15,7 +15,9 @@ import {
   PRODUCT_UPDATE_REQUEST,
   PRODUCT_UPDATE_SUCCESS,
   PRODUCT_UPDATE_FAIL,
-  PRODUCT_UPDATE_RESET,
+  PRODUCT_CREATE_REVIEW_REQUEST,
+  PRODUCT_CREATE_REVIEW_SUCCESS,
+  PRODUCT_CREATE_REVIEW_FAIL,
   PRODUCT_IMAGE_UPLOAD_REQUEST,
   PRODUCT_IMAGE_UPLOAD_SUCCESS,
   PRODUCT_IMAGE_UPLOAD_FAIL,
@@ -204,5 +206,44 @@ export const uploadProductImage = (file, productId) => async (dispatch) => {
           type: PRODUCT_IMAGE_UPLOAD_FAIL,
           payload: error.response,
       });
+  }
+};
+
+export const createProductReview = (productId, review) => async (dispatchEvent, getState) => {
+  try {
+    dispatchEvent({
+      type: PRODUCT_CREATE_REVIEW_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `/api/products/${productId}/review`,
+      review,
+      config
+    );
+
+    dispatchEvent({
+      type: PRODUCT_CREATE_REVIEW_SUCCESS,
+      payload: data,
+    });
+    
+  } catch (error) {
+    dispatchEvent({
+      type: PRODUCT_CREATE_REVIEW_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
   }
 };

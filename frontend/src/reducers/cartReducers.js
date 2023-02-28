@@ -38,6 +38,7 @@ export const cartReducer = (state = { cartItems:[], shippingAddress: {} } , acti
             }
 
         case CART_CLEAR_ITEMS:
+            localStorage.removeItem("cartItems");
             return{
                 ...state,
                 cartItems:[]
