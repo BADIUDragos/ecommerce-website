@@ -4,7 +4,7 @@ import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import Badge from 'react-bootstrap/Badge'
 import { LinkContainer } from "react-router-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { logout } from '../actions/userActions'
+import { logout } from '../actions/userActions';
 
 function Header() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -33,7 +33,7 @@ function Header() {
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mr-auto">
+            <Nav className="ms-auto">
               <LinkContainer to="/cart">
                 <Nav.Link>
                   <i className="fas fa-shopping-cart"><Badge pill className="bg-danger">{Object.keys(cartItems).length}</Badge></i>

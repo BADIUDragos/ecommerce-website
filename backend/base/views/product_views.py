@@ -8,7 +8,11 @@ from base.serializers import ProductSerializer
 
 from rest_framework import status
 
-
+@api_view(['GET'])
+def getTopProducts(request):
+    products = Product.objects.filter(rating__gt=2).order_by('-rating')[0:5]
+    serializer = ProductSerializer(products, many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def getProducts(request):

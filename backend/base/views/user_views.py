@@ -42,6 +42,8 @@ def registerUser(request):
 
         serializer = UserSerializerWithToken(user, many=False)
 
+        # Send email to user with verification code
+
         return Response(serializer.data)
     except:
         message = {'detail': 'Email is already registerd'}

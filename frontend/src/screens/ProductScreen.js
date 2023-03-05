@@ -162,9 +162,11 @@ function ProductScreen() {
         </Row>
         <Row>
           <Col md={6}>
-            <h4>Reviews</h4>
-            {product.reviews.length === 0 && <Message variant='info'>No Reviews</Message>}
             <ListGroup variant='flush'>
+              <ListGroup.Item><h4 className='mt-5'>Reviews</h4>
+                {product.reviews.length === 0 && <Message variant='info'>No reviews yet, be our first !</Message>}
+              </ListGroup.Item>
+              
               {product.reviews.map((review) => (
                 <ListGroup.Item key={review._id}>
                   <strong>{review.name}</strong>
@@ -175,7 +177,7 @@ function ProductScreen() {
               ))}
 
               <ListGroup.Item>
-                <h4>Add a review</h4>
+                <h4 className="mt-5">Add a review</h4>
                 
                 {loadingProductReview && <Loader/>}
                 {successProductReview && <Message variant='success'>Review submitted !</Message>}
@@ -199,7 +201,7 @@ function ProductScreen() {
                       </Form.Control>
                     </Form.Group>
                     <Form.Group controlId='comment'>
-                      <Form.Label>Review</Form.Label>
+                      <Form.Label className="mt-2">Review</Form.Label>
                       <Form.Control
                       as='textarea'
                       row='5'

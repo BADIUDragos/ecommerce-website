@@ -1,10 +1,11 @@
 
 import thunk from 'redux-thunk'
 import { configureStore } from '@reduxjs/toolkit'
-import { productListReducer, productDetailsReducer, productDeleteReducer, productCreateReducer, productUpdateReducer, productImageUploadReducer, productCreateReviewReducer } from './reducers/productReducers'
+import { productListReducer, productDetailsReducer, productDeleteReducer, productCreateReducer, productUpdateReducer, productImageUploadReducer, productCreateReviewReducer,
+        productTopReducer } from './reducers/productReducers'
 import { cartReducer } from './reducers/cartReducers'
 import { userLoginReducer, userRegisterReducer, userDetailsReducer, userUpdateProfileReducer, 
-    userListReducer, userDeleteReducer, userUpdateReducer } from './reducers/userReducers'
+        userListReducer, userDeleteReducer, userUpdateReducer } from './reducers/userReducers'
 import { orderCreateReducer, orderDetailsReducer, orderPayReducer, orderListMyReducer, orderListReducer, orderShippedReducer, orderDeliveredReducer } from './reducers/orderReducers'
 
 const cartItemsFromStorage = localStorage.getItem('cartItems') ?
@@ -28,6 +29,7 @@ const store = configureStore({
         productUpdate: productUpdateReducer,
         productUploadImage: productImageUploadReducer,
         productCreateReview: productCreateReviewReducer,
+        productTop: productTopReducer,
 
         cart: cartReducer,
         

@@ -85,7 +85,7 @@ function ProfileScreen() {
             ></Form.Control>
           </Form.Group>
 
-          <Form.Group controlId="email">
+          <Form.Group controlId="email" className="mt-2">
             <Form.Label>Email Address</Form.Label>
             <Form.Control
               required
@@ -96,7 +96,7 @@ function ProfileScreen() {
             ></Form.Control>
           </Form.Group>
 
-          <Form.Group controlId="password">
+          <Form.Group controlId="password" className="mt-2">
             <Form.Label>Password</Form.Label>
             <Form.Control
               type="password"
@@ -106,7 +106,7 @@ function ProfileScreen() {
             ></Form.Control>
           </Form.Group>
 
-          <Form.Group controlId="confirmpassword">
+          <Form.Group controlId="confirmpassword" className="mt-2">
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
               type="password"

@@ -4,6 +4,7 @@ import { Row, Col } from "react-bootstrap";
 import Product from "../components/Product";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
+import ProductCarousel from '../components/ProductCarousel'
 import { listProducts } from "../actions/productActions";
 
 function HomeScreen() {
@@ -17,7 +18,9 @@ function HomeScreen() {
 
   return (
     <div>
-      <h1>Latest Products</h1>
+      <h1 className='mt-3'>Featured</h1>
+      <ProductCarousel/>
+      <h1 className='mt-5'>Natural Products</h1>
       {loading ? (
         <Loader />
       ) : error ? (
