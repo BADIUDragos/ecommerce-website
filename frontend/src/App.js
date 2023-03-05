@@ -49,6 +49,7 @@ function App() {
           </Routes>
         </Container>
       </main>
+      <hr/>
       <Footer />
     </Router>
   );
