@@ -104,7 +104,7 @@ function ProductEditScreen() {
               ></Form.Control>
             </Form.Group>
 
-            <Form.Group controlId="price">
+            <Form.Group controlId="price" className="mt-3">
               <Form.Label>Price</Form.Label>
               <Form.Control
                 type="number"
@@ -114,7 +114,7 @@ function ProductEditScreen() {
               ></Form.Control>
             </Form.Group>
 
-            <Form.Group controlId="image">
+            <Form.Group controlId="image" className="mt-3">
               <Form.Label>Image</Form.Label>
 
               <Form.Control type="file" onChange={uploadFileHandler} />
@@ -122,7 +122,7 @@ function ProductEditScreen() {
               {uploading && <Loader />}
             </Form.Group>
 
-            <Form.Group controlId="brand">
+            <Form.Group controlId="brand" className="mt-3">
               <Form.Label>Brand</Form.Label>
               <Form.Control
                 type="text"
@@ -132,7 +132,7 @@ function ProductEditScreen() {
               ></Form.Control>
             </Form.Group>
 
-            <Form.Group controlId="countInStock">
+            <Form.Group controlId="countInStock" className="mt-3">
               <Form.Label>Stock</Form.Label>
               <Form.Control
                 type="number"
@@ -142,23 +142,13 @@ function ProductEditScreen() {
               ></Form.Control>
             </Form.Group>
 
-            <Form.Group controlId="category">
+            <Form.Group controlId="category" className="mt-3">
               <Form.Label>Category</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-
-            <Form.Group controlId="description">
-              <Form.Label>Brand</Form.Label>
-              <Form.Control
-                type="description"
-                placeholder="Enter description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
               ></Form.Control>
             </Form.Group>
 

@@ -26,7 +26,7 @@ import ProductEditScreen from "./screens/ProductEditScreen";
 function App() {
   return (
     <Router>
-      <Header />
+      <Header/>
       <main className="py-3">
         <Container>
           <Routes>

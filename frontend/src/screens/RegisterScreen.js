@@ -55,7 +55,7 @@ function RegisterScreen() {
           ></Form.Control>
         </Form.Group>
 
-        <Form.Group controlId="email">
+        <Form.Group controlId="email" className="mt-3">
           <Form.Label>Email Address</Form.Label>
           <Form.Control
             required
@@ -66,7 +66,7 @@ function RegisterScreen() {
           ></Form.Control>
         </Form.Group>
 
-        <Form.Group controlId="password">
+        <Form.Group controlId="password" className="mt-3">
           <Form.Label>Password</Form.Label>
           <Form.Control
             required
@@ -77,7 +77,7 @@ function RegisterScreen() {
           ></Form.Control>
         </Form.Group>
 
-        <Form.Group controlId="confirmpassword">
+        <Form.Group controlId="confirmpassword" className="mt-3">
           <Form.Label>Confirm Password</Form.Label>
           <Form.Control
             required

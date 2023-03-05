@@ -13,7 +13,6 @@ import {
   USER_UPDATE_PROFILE_REQUEST,
   USER_UPDATE_PROFILE_SUCCESS,
   USER_UPDATE_PROFILE_FAIL,
-  USER_UPDATE_PROFILE_RESET,
   USER_DETAILS_RESET,
   USER_LIST_REQUEST,
   USER_LIST_SUCCESS,
@@ -29,6 +28,7 @@ import {
 
 import { ORDER_LIST_MY_RESET } from "../constants/orderConstants";
 import { PRODUCT_CREATE_REVIEW_RESET } from "../constants/productConstants";
+import { CART_CLEAR_ITEMS } from "../constants/cartConstants";
 
 export const login = (email, password) => async (dispatchEvent) => {
   try {
@@ -74,6 +74,7 @@ export const logout = () => (dispatchEvent) => {
   dispatchEvent({ type: ORDER_LIST_MY_RESET });
   dispatchEvent({ type: USER_LIST_RESET });
   dispatchEvent({ type: PRODUCT_CREATE_REVIEW_RESET})
+  dispatchEvent({ type: CART_CLEAR_ITEMS})
 };
 
 export const register = (name, email, password) => async (dispatchEvent) => {

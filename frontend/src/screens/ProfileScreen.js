@@ -137,7 +137,6 @@ function ProfileScreen() {
                 <th>TOTAL</th>
                 <th>Paid</th>
                 <th>Delivered</th>
-                <th></th>
               </tr>
             </thead>
 

@@ -85,10 +85,10 @@ def getUsers(request):
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def getUserById(request, pk):
-    print(pk)
     user = User.objects.get(id=pk)
     serializer = UserSerializer(user, many=False)
     return Response(serializer.data)
@@ -104,7 +104,7 @@ def deleteUser(request, pk):
 
 @api_view(['PUT'])
 @permission_classes([IsAdminUser])
-def updateUserProfile(request, pk):
+def updateUserProfileAdmin(request, pk):
     user = User.objects.get(id=pk)
 
     data = request.data

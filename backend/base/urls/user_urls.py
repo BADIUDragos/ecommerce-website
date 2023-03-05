@@ -10,6 +10,6 @@ urlpatterns = [
     path('register/', views.registerUser, name='register'),
 
     path('<str:pk>', views.getUserById, name='user'),
-    path('update/<str:pk>', views.updateUserProfile, name='user-update'),
+    path('update/<str:pk>', views.updateUserProfileAdmin, name='user-update'),
     path('delete/<str:pk>', views.deleteUser, name='user-delete'),
 ]
