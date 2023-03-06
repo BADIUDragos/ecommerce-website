@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from datetime import datetime
 
 from base.models import Product, Order, OrderItem, ShippingAddress
-from base.serializers import ProductSerializer, OrderSerializer
+from base.serializers import OrderSerializer
 
 
 @api_view(['POST'])

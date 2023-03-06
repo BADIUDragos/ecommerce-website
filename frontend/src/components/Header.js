@@ -27,7 +27,7 @@ function Header() {
         <Container>
           <LinkContainer to="/">
             <Navbar.Brand>
-              <img src={"images/logo_cut.png"} style={{width:300, marginTop: -7}} alt='Annedora' />
+              <img src={"images/logo_cut.png"} style={{width:400, marginTop: -7}} alt='Annedora'/>
             </Navbar.Brand>
           </LinkContainer>
 

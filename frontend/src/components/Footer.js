@@ -15,7 +15,7 @@ function Footer() {
           
           <Col md={3}>
             <ListGroup variant="flush">
-              Contact us: 
+              Contact info: 
               <ListGroup.Item className="mt-3">
                 <i class="fa-solid fa-envelope"></i> info@annedora.ca
               </ListGroup.Item>
