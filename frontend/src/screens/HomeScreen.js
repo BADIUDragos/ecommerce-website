@@ -5,35 +5,39 @@ import Product from "../components/Product";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import ProductCarousel from '../components/ProductCarousel'
-import { listProducts } from "../actions/productActions";
+import { listProducts } from '../actions/productActions';
 
-function HomeScreen() {
+function ProductRow() {
   const dispatch = useDispatch();
-  const productList = useSelector((state) => state.productList);
-  const { error, loading, products } = productList;
-
+  const { error, loading, products } = useSelector((state) => state.productList);
+  
   useEffect(() => {
     dispatch(listProducts());
   }, [dispatch]);
 
+
+  // use early returns outside of your main render to avoid cluttering the actual ui being returned
+  if (loading) return <Loader />;
+  if (error) return <Message variant="danger">{error}</Message>;
+  
+  return (
+    <Row>
+      {products.map((product) => (
+        <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+          <Product product={product} />
+        </Col>
+      ))}
+    </Row>
+  );
+}
+
+function HomeScreen() {
   return (
     <div>
       <h1 className='mt-3'>Featured</h1>
       <ProductCarousel/>
       <h1 className='mt-5'>Natural Products</h1>
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <Row>
-          {products.map((product) => (
-            <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-              <Product product={product}S/>
-            </Col>
-          ))}
-        </Row>
-      )}
+      <ProductRow />
     </div>
   );
 }

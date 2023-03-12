@@ -36,7 +36,9 @@ function Header() {
             <Nav className="ms-auto">
               <LinkContainer to="/cart">
                 <Nav.Link>
-                  <i className="fas fa-shopping-cart"><Badge pill className="bg-danger">{Object.keys(cartItems).length}</Badge></i>
+                  <div className="fas fa-shopping-cart">
+                    <Badge pill className="bg-danger">{Object.keys(cartItems).length}</Badge>
+                  </div>
                 </Nav.Link>
               </LinkContainer>
 
@@ -53,7 +55,7 @@ function Header() {
               ) : (
                 <LinkContainer to="/login">
                   <Nav.Link>
-                    <i className="fas fa-user"></i>Login
+                    <div className="fas fa-user" style={{ marginRight: '0.4rem' }} />Login
                   </Nav.Link>
                 </LinkContainer>
               )}
