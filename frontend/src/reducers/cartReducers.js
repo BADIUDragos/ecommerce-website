@@ -41,7 +41,7 @@ export const cartReducer = (state = { cartItems:[], shippingAddress: {} } , acti
             localStorage.removeItem("cartItems");
             return{
                 ...state,
-                cartItems:[]
+                cartItems: []
             }
             
         default:

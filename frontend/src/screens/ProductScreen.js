@@ -26,6 +26,7 @@ import moment from "moment";
 
 function ProductScreen() {
   const { id } = useParams();
+  const [showAddToCartSuccess, setShowAddToCartSuccess] = useState(false);
 
   const dispatch = useDispatch();
   const productDetails = useSelector((state) => state.productDetails);
@@ -57,6 +58,8 @@ function ProductScreen() {
 
   const addToCartHandler = () => {
     dispatch(addToCart(id, qty));
+    setShowAddToCartSuccess(true);
+    setTimeout(() => setShowAddToCartSuccess(false), 3000);
   };
 
   const submitHandler = (e) => {
@@ -133,7 +136,7 @@ function ProductScreen() {
                           onChange={(e) => setQty(e.target.value)}
                         >
                           {[...Array(product.countInStock).keys()].map((x) => (
-                            <option key={x + 1} value={x + 1}>
+                            <option key={x + 1} value={Number(x) + 1}>
                               {x + 1}
                             </option>
                           ))}
@@ -149,9 +152,11 @@ function ProductScreen() {
                     className="btn-block w-100"
                     disabled={product.countInStock === 0}
                     type="button"
+                    style={{ marginBottom: '0.5rem' }}
                   >
                     ADD TO CART
                   </Button>
+                  {showAddToCartSuccess ? <Message variant='success' style={{ textAlign: 'center' }}>Items added to cart!</Message> : null}
                 </ListGroup.Item>
               </ListGroup>
             </Card>
