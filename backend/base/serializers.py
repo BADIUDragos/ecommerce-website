@@ -29,6 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
         isAdmin = obj.is_staff
         return isAdmin
 
+
 class UserSerializerWithToken(UserSerializer):
 
     token = serializers.SerializerMethodField(read_only=True)
@@ -41,10 +42,12 @@ class UserSerializerWithToken(UserSerializer):
         token = RefreshToken.for_user(obj)
         return str(token.access_token)
 
+
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
+
 
 class ProductSerializer(serializers.ModelSerializer):
     reviews = serializers.SerializerMethodField(read_only=True)
@@ -58,15 +61,18 @@ class ProductSerializer(serializers.ModelSerializer):
         serializer = ReviewSerializer(reviews, many=True)
         return serializer.data
 
+
 class ShippingAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingAddress
         fields = '__all__'
 
+
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = '__all__'
+
 
 class OrderSerializer(serializers.ModelSerializer):
 
@@ -96,3 +102,9 @@ class OrderSerializer(serializers.ModelSerializer):
         serializer = UserSerializer(user, many=False)
 
         return serializer.data
+
+
+class BillSerializer(serializers.Serializer):
+    subtotal = serializers.DecimalField(max_digits=10, decimal_places=2)
+    tax = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total = serializers.DecimalField(max_digits=10, decimal_places=2)

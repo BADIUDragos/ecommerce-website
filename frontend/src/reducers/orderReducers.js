@@ -31,6 +31,10 @@ import {
   ORDER_DELIVERED_SUCCESS,
   ORDER_DELIVERED_FAIL,
   ORDER_DELIVERED_RESET,
+
+  ORDER_GET_TOTAL_REQUEST,
+  ORDER_GET_TOTAL_SUCCESS,
+  ORDER_GET_TOTAL_FAIL,
 } from "../constants/orderConstants";
 
 export const orderCreateReducer = (state = {}, action) => {
@@ -204,3 +208,36 @@ export const orderDeliveredReducer = (state = {}, action) => {
       return state;
   }
 };
+
+export const orderTotalReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_GET_TOTAL_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        success: false,
+      };
+    
+    case ORDER_GET_TOTAL_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        success: true,
+        prices: action.payload
+      };
+    
+    case ORDER_GET_TOTAL_FAIL:
+      return {
+        ...state,
+        loading: false,
+        success: false,
+        error: action.payload,
+      };
+    
+    default:
+      return state;
+  }
+};
+
+
+

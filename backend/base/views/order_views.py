@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from datetime import datetime
 
 from base.models import Product, Order, OrderItem, ShippingAddress
-from base.serializers import OrderSerializer
+from base.serializers import OrderSerializer, BillSerializer
 
 
 @api_view(['POST'])
@@ -126,3 +126,22 @@ def updateOrderToDelivered(request, pk):
     order.save()
 
     return Response('Order was delivered')
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def getPrices(request):
+
+    subtotal = 0
+
+    items = request.GET.getlist('items')
+    if not items:
+        return Response({'detail': 'No Items in Request'}, status=status.HTTP_400_BAD_REQUEST)
+    for item in items:
+        price = Product.objects.get(id=item['id']).price * item['qty']
+        subtotal += price
+
+    tax = subtotal * 0.14975
+    total = subtotal + tax
+
+    serializer = BillSerializer({'subtotal': subtotal, 'tax': tax, 'total': total})
+    return Response(serializer.data)

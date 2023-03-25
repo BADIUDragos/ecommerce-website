@@ -31,6 +31,10 @@ import {
     ORDER_DELIVERED_SUCCESS,
     ORDER_DELIVERED_FAIL,
     ORDER_DELIVERED_RESET,
+
+    ORDER_GET_TOTAL_REQUEST,
+    ORDER_GET_TOTAL_SUCCESS,
+    ORDER_GET_TOTAL_FAIL,
   } from "../constants/orderConstants";
 
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
@@ -312,3 +316,44 @@ export const markOrderAsDelivered = (id) => async (dispatchEvent, getState) => {
     });
   }
 };
+
+export const getTotal = (items) => async(dispatch, getState) => {
+  try {
+      
+      dispatch({
+          type: ORDER_GET_TOTAL_REQUEST
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+          headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${userInfo.token}`
+          }
+      };
+
+      const { data } = await axios.get(`/api/orders/total/`, items, config);
+
+      dispatch({
+          type: ORDER_GET_TOTAL_SUCCESS,
+          payload: data
+      });
+
+      // dispatch({
+      //     type: CART_CLEAR_ITEMS
+      // });
+
+      localStorage.removeItem('cartItems');
+  } catch (error) {
+      dispatch({
+          type: ORDER_GET_TOTAL_FAIL,
+          payload:
+            error.response && error.response.data.detail
+              ? error.response.data.detail
+              : error.message,
+      });
+  }
+}

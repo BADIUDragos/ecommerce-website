@@ -8,6 +8,7 @@ import UserInfo from './UserInfo';
 
 function Header() {
   const { cartItems } = useSelector((state) => state.cart);
+  const totalQty = cartItems.reduce((acc, item) => acc + item.qty, 0);
 
   return (
     <header>
@@ -24,7 +25,7 @@ function Header() {
               <LinkContainer to="/cart">
                 <Nav.Link>
                   <i className="fas fa-shopping-cart">
-                    <Badge pill className="bg-danger">{Object.keys(cartItems).length}</Badge>
+                    <Badge pill className="bg-danger">{totalQty}</Badge>
                   </i>
                 </Nav.Link>
               </LinkContainer>
