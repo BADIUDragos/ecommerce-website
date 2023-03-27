@@ -1,3 +1,5 @@
+import decimal
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -127,21 +129,32 @@ def updateOrderToDelivered(request, pk):
 
     return Response('Order was delivered')
 
-@api_view(['GET'])
+@api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def getPrices(request):
 
     subtotal = 0
 
-    items = request.GET.getlist('items')
+    items = request.data
     if not items:
         return Response({'detail': 'No Items in Request'}, status=status.HTTP_400_BAD_REQUEST)
+
     for item in items:
-        price = Product.objects.get(id=item['id']).price * item['qty']
+        product = Product.objects.get(_id=item['id'])
+        qty = item['qty']
+        if product.countInStock < qty:
+            return Response({'detail': 'Only %d %s are currently left in stock' % (product.countInStock, product.name)},
+                            status=status.HTTP_400_BAD_REQUEST)
+        price = product.price * qty
         subtotal += price
 
-    tax = subtotal * 0.14975
+    shipping = 0
+    if subtotal < 100.00:
+        shipping = 10
+    tax_rate = decimal.Decimal('0.14975')
+    tax = (subtotal+shipping) * tax_rate
+
     total = subtotal + tax
 
-    serializer = BillSerializer({'subtotal': subtotal, 'tax': tax, 'total': total})
+    serializer = BillSerializer({'subtotal': subtotal, 'tax': tax, 'shipping': shipping, 'total': total})
     return Response(serializer.data)

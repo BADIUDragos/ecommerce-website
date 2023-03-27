@@ -17,16 +17,14 @@ function PlaceOrderScreen() {
 
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
-
-  const items = cartItems.reduce((acc, item) => {
-    acc[item._id] = item._id;
-    acc[item.qty] = item.qty
-    debugger
-    return acc;
-  }, {});
+  const items = cartItems.map((item) => ({
+    id: item.product,
+    qty: item.qty,
+  }));
 
   const orderTotal = useSelector((state) => state.orderTotal);
   const { error, loading, success, prices } = orderTotal;
+  const { subtotal = 0, shipping = 0, tax = 0, total = 0 } = prices || {};
 
   useEffect(() => {
     if (!orderTotal || !prices) { 
@@ -131,29 +129,29 @@ function PlaceOrderScreen() {
 
               <ListGroup.Item>
                 <Row>
-                  <Col>Item:</Col>
-                  <Col>${cart.itemsPrice}</Col>
+                  <Col>Subtotal:</Col>
+                  <Col>${subtotal}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping:</Col>
-                  <Col>${cart.shippingPrice}</Col>
+                  <Col>${shipping}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Taxes:</Col>
-                  <Col>${cart.taxPrice}</Col>
+                  <Col>${tax}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Total:</Col>
-                  <Col>${cart.totalPrice}</Col>
+                  <Col>${total}</Col>
                 </Row>
               </ListGroup.Item>
 

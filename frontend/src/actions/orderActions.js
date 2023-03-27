@@ -319,6 +319,8 @@ export const markOrderAsDelivered = (id) => async (dispatchEvent, getState) => {
 
 export const getTotal = (items) => async(dispatch, getState) => {
   try {
+
+      console.log(items)
       
       dispatch({
           type: ORDER_GET_TOTAL_REQUEST
@@ -335,7 +337,7 @@ export const getTotal = (items) => async(dispatch, getState) => {
           }
       };
 
-      const { data } = await axios.get(`/api/orders/total/`, items, config);
+      const { data } = await axios.post(`/api/orders/total/`, items, config);
 
       dispatch({
           type: ORDER_GET_TOTAL_SUCCESS,
