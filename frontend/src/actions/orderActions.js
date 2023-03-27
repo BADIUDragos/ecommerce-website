@@ -348,7 +348,7 @@ export const getTotal = (items) => async(dispatch, getState) => {
       //     type: CART_CLEAR_ITEMS
       // });
 
-      localStorage.removeItem('cartItems');
+      // localStorage.removeItem('cartItems');
   } catch (error) {
       dispatch({
           type: ORDER_GET_TOTAL_FAIL,

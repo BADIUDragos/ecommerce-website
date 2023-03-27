@@ -107,4 +107,5 @@ class OrderSerializer(serializers.ModelSerializer):
 class BillSerializer(serializers.Serializer):
     subtotal = serializers.DecimalField(max_digits=10, decimal_places=2)
     tax = serializers.DecimalField(max_digits=10, decimal_places=2)
+    shipping = serializers.DecimalField(max_digits=10, decimal_places=2)
     total = serializers.DecimalField(max_digits=10, decimal_places=2)

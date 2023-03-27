@@ -223,6 +223,7 @@ export const orderTotalReducer = (state = {}, action) => {
         ...state,
         loading: false,
         success: true,
+        error: null,
         prices: action.payload
       };
     

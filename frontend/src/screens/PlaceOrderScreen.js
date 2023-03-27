@@ -3,16 +3,12 @@ import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
+import Loader from "../components/Loader";
 import CheckoutSteps from "../components/CheckoutSteps";
 import { createOrder, getTotal } from "../actions/orderActions";
 import { ORDER_CREATE_RESET } from "../constants/orderConstants";
 
-function PlaceOrderScreen() {
-  const navigate = useNavigate();
-
-  // const orderCreate = useSelector((state) => state.orderCreate);
-  // const { order, error, success } = orderCreate;
-
+function OrderSummary() {
   const dispatch = useDispatch();
 
   const cart = useSelector((state) => state.cart);
@@ -22,15 +18,78 @@ function PlaceOrderScreen() {
     qty: item.qty,
   }));
 
-  const orderTotal = useSelector((state) => state.orderTotal);
-  const { error, loading, success, prices } = orderTotal;
+  useEffect(() => {
+    dispatch(getTotal(items));
+  }, [dispatch]);
+
+  const { error, loading, prices } = useSelector((state) => state.orderTotal);
   const { subtotal = 0, shipping = 0, tax = 0, total = 0 } = prices || {};
 
-  useEffect(() => {
-    if (!orderTotal || !prices) { 
-      dispatch(getTotal(items))
-    }
-  }, [dispatch])
+  if (loading) return <Loader />;
+  if (error) return <Message variant="danger">{error}</Message>;
+
+  return (
+    <Card>
+      <ListGroup variant="flush">
+        <ListGroup.Item>
+          <h2>Order Summary</h2>
+        </ListGroup.Item>
+
+        <ListGroup.Item>
+          <Row>
+            <Col>Subtotal:</Col>
+            <Col>${subtotal}</Col>
+          </Row>
+        </ListGroup.Item>
+
+        <ListGroup.Item>
+          <Row>
+            <Col>Shipping:</Col>
+            <Col>${shipping}</Col>
+          </Row>
+        </ListGroup.Item>
+
+        <ListGroup.Item>
+          <Row>
+            <Col>Taxes:</Col>
+            <Col>${tax}</Col>
+          </Row>
+        </ListGroup.Item>
+
+        <ListGroup.Item>
+          <Row>
+            <Col>Total:</Col>
+            <Col>${total}</Col>
+          </Row>
+        </ListGroup.Item>
+
+        {/* <ListGroup.Item>
+                {error && <Message variant="danger">{error}</Message>}
+              </ListGroup.Item> */}
+
+        <ListGroup.Item>
+          <Button
+            type="button"
+            className="w-100"
+            // disabled={cart.cartItems === 0}
+            // onClick={placeOrder}
+          >
+            Place Order
+          </Button>
+        </ListGroup.Item>
+      </ListGroup>
+    </Card>
+  );
+}
+
+function PlaceOrderScreen() {
+  const navigate = useNavigate();
+
+  // const orderCreate = useSelector((state) => state.orderCreate);
+  // const { order, error, success } = orderCreate;
+
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
 
   // if (!cart.paymentMethod) {
   //   navigate("/payment");
@@ -121,56 +180,7 @@ function PlaceOrderScreen() {
         </Col>
 
         <Col md={4}>
-          <Card>
-            <ListGroup variant="flush">
-              <ListGroup.Item>
-                <h2>Order Summary</h2>
-              </ListGroup.Item>
-
-              <ListGroup.Item>
-                <Row>
-                  <Col>Subtotal:</Col>
-                  <Col>${subtotal}</Col>
-                </Row>
-              </ListGroup.Item>
-
-              <ListGroup.Item>
-                <Row>
-                  <Col>Shipping:</Col>
-                  <Col>${shipping}</Col>
-                </Row>
-              </ListGroup.Item>
-
-              <ListGroup.Item>
-                <Row>
-                  <Col>Taxes:</Col>
-                  <Col>${tax}</Col>
-                </Row>
-              </ListGroup.Item>
-
-              <ListGroup.Item>
-                <Row>
-                  <Col>Total:</Col>
-                  <Col>${total}</Col>
-                </Row>
-              </ListGroup.Item>
-
-              {/* <ListGroup.Item>
-                {error && <Message variant="danger">{error}</Message>}
-              </ListGroup.Item> */}
-
-              <ListGroup.Item>
-                <Button
-                  type="button"
-                  className="w-100"
-                  disabled={cart.cartItems === 0}
-                  // onClick={placeOrder}
-                >
-                  Place Order
-                </Button>
-              </ListGroup.Item>
-            </ListGroup>
-          </Card>
+          <OrderSummary />
         </Col>
       </Row>
     </div>
