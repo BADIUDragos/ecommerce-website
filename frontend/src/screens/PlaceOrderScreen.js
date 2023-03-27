@@ -8,10 +8,11 @@ import CheckoutSteps from "../components/CheckoutSteps";
 import { createOrder, getTotal } from "../actions/orderActions";
 import { ORDER_CREATE_RESET } from "../constants/orderConstants";
 
-function OrderSummary() {
+function OrderSummary(props) {
+
   const dispatch = useDispatch();
 
-  const cart = useSelector((state) => state.cart);
+  const { cart } = props
   const { cartItems } = cart;
   const items = cartItems.map((item) => ({
     id: item.product,
@@ -87,8 +88,7 @@ function PlaceOrderScreen() {
 
   // const orderCreate = useSelector((state) => state.orderCreate);
   // const { order, error, success } = orderCreate;
-
-  const dispatch = useDispatch();
+  
   const cart = useSelector((state) => state.cart);
 
   // if (!cart.paymentMethod) {
@@ -180,7 +180,7 @@ function PlaceOrderScreen() {
         </Col>
 
         <Col md={4}>
-          <OrderSummary />
+          <OrderSummary cart={cart}/>
         </Col>
       </Row>
     </div>
