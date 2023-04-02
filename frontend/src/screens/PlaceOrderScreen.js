@@ -102,7 +102,7 @@ function OrderSummary(props) {
 
   useEffect(() => {
     dispatch(getTotal(items));
-  }, [dispatch]);
+  }, [dispatch, items]);
 
   const { error, loading, prices } = useSelector((state) => state.orderTotal);
   const { subtotal = 0, shipping = 0, tax = 0, total = 0 } = prices || {};

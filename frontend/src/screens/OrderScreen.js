@@ -37,7 +37,7 @@ function OrderScreen() {
       dispatch({type:ORDER_DELIVERED_RESET})
       dispatch(getOrderDetails(id));
     }
-  }, [order, id, dispatch, successShipped, successDelivered]);
+  }, [order, id, dispatch, successShipped, successDelivered, navigate, userInfo]);
 
   const markAsShippedHandler = () => {
     dispatch(markOrderAsShipped(id))
