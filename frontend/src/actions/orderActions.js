@@ -35,6 +35,10 @@ import {
     ORDER_GET_TOTAL_REQUEST,
     ORDER_GET_TOTAL_SUCCESS,
     ORDER_GET_TOTAL_FAIL,
+
+    ORDER_GET_PAYPAL_INFO_REQUEST,
+    ORDER_GET_PAYPAL_INFO_SUCCESS,
+    ORDER_GET_PAYPAL_INFO_FAIL,
   } from "../constants/orderConstants";
 
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
@@ -319,8 +323,6 @@ export const markOrderAsDelivered = (id) => async (dispatchEvent, getState) => {
 
 export const getTotal = (items) => async(dispatch, getState) => {
   try {
-
-      console.log(items)
       
       dispatch({
           type: ORDER_GET_TOTAL_REQUEST
@@ -352,6 +354,42 @@ export const getTotal = (items) => async(dispatch, getState) => {
   } catch (error) {
       dispatch({
           type: ORDER_GET_TOTAL_FAIL,
+          payload:
+            error.response && error.response.data.detail
+              ? error.response.data.detail
+              : error.message,
+      });
+  }
+}
+
+export const getPayPalInfo = () => async(dispatch, getState) => {
+  try {
+      
+      dispatch({
+          type: ORDER_GET_PAYPAL_INFO_REQUEST
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+          headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${userInfo.token}`
+          }
+      };
+
+      const { data } = await axios.get(`/api/orders/paypal/`, config);
+
+      dispatch({
+          type: ORDER_GET_PAYPAL_INFO_SUCCESS,
+          payload: data
+      });
+
+  } catch (error) {
+      dispatch({
+          type: ORDER_GET_PAYPAL_INFO_FAIL,
           payload:
             error.response && error.response.data.detail
               ? error.response.data.detail

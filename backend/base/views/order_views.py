@@ -16,7 +16,6 @@ from base.serializers import OrderSerializer, BillSerializer, PayPalSerializer
 def addOrderItems(request):
     user = request.user
     data = request.data
-
     orderItems = data['orderItems']
 
     if len(orderItems) == 0:
@@ -24,32 +23,34 @@ def addOrderItems(request):
     else:
 
         order = Order.objects.create(
-            user = user,
-            paymentMethod = data['paymentMethod'],
-            itemsPrice = data['itemsPrice'],
-            taxPrice = data['taxPrice'],
-            shippingPrice = data['shippingPrice'],
-            totalPrice = data['totalPrice']
+            user=user,
+            paymentMethod=data['paymentMethod'],
+            itemsPrice=data['itemsPrice'],
+            taxPrice=data['taxPrice'],
+            shippingPrice=data['shippingPrice'],
+            totalPrice=data['totalPrice'],
+            isPaid=True,
+            paidAt=datetime.now()
         )
     
         shipping = ShippingAddress.objects.create(
-            order = order,
-            address = data['shippingAddress']['address'],
-            city = data['shippingAddress']['city'],
-            postalCode = data['shippingAddress']['postalCode'],
-            country = 'Canada'
+            order=order,
+            address=data['shippingAddress']['address'],
+            city=data['shippingAddress']['city'],
+            postalCode=data['shippingAddress']['postalCode'],
+            country='Canada'
         )
 
         for i in orderItems:
             product = Product.objects.get(_id=i['product'])
 
             item = OrderItem.objects.create(
-                product = product,
-                order = order,
-                name = product.name,
-                qty = i['qty'],
-                price = i['price'],
-                image = product.image.url,
+                product=product,
+                order=order,
+                name=product.name,
+                qty=i['qty'],
+                price=i['price'],
+                image=product.image.url
             )
 
             product.countInStock -= int(item.qty)

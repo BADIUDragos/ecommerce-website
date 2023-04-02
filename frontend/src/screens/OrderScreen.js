@@ -6,11 +6,9 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { getOrderDetails, payOrder, markOrderAsShipped, markOrderAsDelivered } from "../actions/orderActions";
 import moment from "moment";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { ORDER_PAY_RESET, ORDER_SHIPPED_RESET, ORDER_DELIVERED_RESET } from '../constants/orderConstants'
 
 function OrderScreen() {
-  const currency = "CAD";
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,9 +25,6 @@ function OrderScreen() {
   const orderDelivered = useSelector((state) => state.orderDelivered);
   const { loading: loadingDelivered, error: errorDelivered, success: successDelivered } = orderDelivered;
 
-  const orderPay = useSelector(state => state.orderPay)
-  const {success: successPay} = orderPay
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -37,17 +32,13 @@ function OrderScreen() {
       navigate('/')
     }
 
-    if (!order || successPay || order._id !== Number(id) || successShipped || successDelivered ) {
+    if (!order || order._id !== Number(id) || successShipped || successDelivered ) {
       dispatch({type:ORDER_PAY_RESET})
       dispatch({type:ORDER_SHIPPED_RESET})
       dispatch({type:ORDER_DELIVERED_RESET})
       dispatch(getOrderDetails(id));
     }
-  }, [order, id, dispatch, successPay, successShipped, successDelivered]);
-
-  const successPaymentHandler = (paymentResult) => {
-    dispatch(payOrder(id, paymentResult))
-  }
+  }, [order, id, dispatch, successShipped, successDelivered]);
 
   const markAsShippedHandler = () => {
     dispatch(markOrderAsShipped(id))
@@ -109,7 +100,7 @@ function OrderScreen() {
 
               {order.isPaid ? (
                 <Message variant="success">
-                  Paid on {moment(order.paidAt).format("MMMM Do, YYYY")}
+                  Paid on {moment(order.paidAt).format("MMMM Do, YYYY")} at {moment(order.paidAt).format("h:mm a")} EST
                 </Message>
               ) : (
                 <Message variant="warning">Not paid</Message>
@@ -186,43 +177,6 @@ function OrderScreen() {
                   <Col>${order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              
-              {!order.isPaid && !userInfo.isAdmin? 
-              <ListGroup.Item>
-                <PayPalScriptProvider
-                  options={{
-                    "client-id":
-                      "AQePZy-SSCXcibd6BMmMP-ps5m1w_4xaQISOPBjcOfmOZ1UuHebHJaCKhUbvfm9AWM-BdzgdHIVjpkAY",
-                      currency: "CAD",
-                  }}
-                >
-                  <PayPalButtons
-                    createOrder={(data, actions) => {
-                      return actions.order
-                        .create({
-                          purchase_units: [
-                            {
-                              amount: {
-                                value: order.totalPrice,
-                              },
-                            },
-                          ],
-                        })
-                        .then((orderId) => {
-                          // Your code here after create the order
-                          return orderId;
-                        });
-                    }}
-                    onApprove={(data, actions) => {
-                      return actions.order.capture().then(function (details) {
-                          successPaymentHandler(details)
-                      });
-                  }}
-                  />
-                </PayPalScriptProvider>
-              </ListGroup.Item> : null}
-
-              
             </ListGroup>
             
             {userInfo && userInfo.isAdmin && order.isPaid &&  (

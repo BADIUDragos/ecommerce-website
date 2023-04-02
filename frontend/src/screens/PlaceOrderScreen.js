@@ -5,14 +5,95 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import CheckoutSteps from "../components/CheckoutSteps";
-import { createOrder, getTotal } from "../actions/orderActions";
+import { createOrder, getTotal, getPayPalInfo } from "../actions/orderActions";
 import { ORDER_CREATE_RESET } from "../constants/orderConstants";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
-function OrderSummary(props) {
-
+function PayPalPayment(props) {
+  const { cart, prices } = props;
   const dispatch = useDispatch();
 
-  const { cart } = props
+  const navigate = useNavigate();
+
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { order, error:errorCreateOrder, success } = orderCreate;
+
+  useEffect(() => {
+    dispatch(getPayPalInfo());
+  }, [dispatch]);
+
+  if (!cart.paymentMethod) {
+    navigate("/payment");
+  }
+
+  const { error, loading, info } = useSelector(
+    (state) => state.orderPayPalInfo
+  );
+  const { client_id = 0, currency = 0 } = info || {};
+  const { subtotal = 0, shipping = 0, tax = 0, total = 0 } = prices || {};
+
+  const successPaymentHandler = async (paymentResult) => {
+    const createOrderResult = await dispatch(
+      createOrder({
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: subtotal,
+        shippingPrice: shipping,
+        taxPrice: tax,
+        totalPrice: total,
+      })
+    );
+  
+    if (success) {
+      navigate(`/order/${order._id}`);
+      dispatch({ type: ORDER_CREATE_RESET });
+    }
+  };
+
+  if (loading & !info) return <Loader />;
+  if (error) return <Message variant="danger">{error}</Message>;
+  if (errorCreateOrder) return <Message variant="danger">{error}</Message>;
+
+  return (
+    <PayPalScriptProvider
+      options={{
+        "client-id": client_id,
+        currency: currency,
+        "disable-funding": "card",
+      }}
+    >
+      <PayPalButtons
+        createOrder={(data, actions) => {
+          return actions.order
+            .create({
+              purchase_units: [
+                {
+                  amount: {
+                    value: total,
+                  },
+                },
+              ],
+            })
+            .then((orderId) => {
+              // Your code here after create the order
+              return orderId;
+            });
+        }}
+        onApprove={(data, actions) => {
+          return actions.order.capture().then(function (details) {
+            successPaymentHandler(details);
+          });
+        }}
+      />
+    </PayPalScriptProvider>
+  );
+}
+
+function OrderSummary(props) {
+  const dispatch = useDispatch();
+
+  const { cart } = props;
   const { cartItems } = cart;
   const items = cartItems.map((item) => ({
     id: item.product,
@@ -64,19 +145,8 @@ function OrderSummary(props) {
           </Row>
         </ListGroup.Item>
 
-        {/* <ListGroup.Item>
-                {error && <Message variant="danger">{error}</Message>}
-              </ListGroup.Item> */}
-
         <ListGroup.Item>
-          <Button
-            type="button"
-            className="w-100"
-            // disabled={cart.cartItems === 0}
-            // onClick={placeOrder}
-          >
-            Place Order
-          </Button>
+          <PayPalPayment total={total} cart={cart} prices={prices} />
         </ListGroup.Item>
       </ListGroup>
     </Card>
@@ -84,40 +154,7 @@ function OrderSummary(props) {
 }
 
 function PlaceOrderScreen() {
-  const navigate = useNavigate();
-
-  // const orderCreate = useSelector((state) => state.orderCreate);
-  // const { order, error, success } = orderCreate;
-  
   const cart = useSelector((state) => state.cart);
-
-  // if (!cart.paymentMethod) {
-  //   navigate("/payment");
-  // }
-  // if (cart.cartItems.length === 0) {
-  //   navigate("/");
-  // }
-
-  // useEffect(() => {
-  //   if (success) {
-  //     navigate(`/order/${order._id}`);
-  //     dispatch({ type: ORDER_CREATE_RESET });
-  //   }
-  // }, [success, navigate]);
-
-  // const placeOrder = () => {
-  //   dispatch(
-  //     createOrder({
-  //       orderItems: cart.cartItems,
-  //       shippingAddress: cart.shippingAddress,
-  //       paymentMethod: cart.paymentMethod,
-  //       itemsPrice: cart.itemsPrice,
-  //       shippingPrice: cart.shippingPrice,
-  //       taxPrice: cart.taxPrice,
-  //       totalPrice: cart.totalPrice,
-  //     })
-  //   );
-  // };
 
   return (
     <div>
@@ -180,7 +217,7 @@ function PlaceOrderScreen() {
         </Col>
 
         <Col md={4}>
-          <OrderSummary cart={cart}/>
+          <OrderSummary cart={cart} />
         </Col>
       </Row>
     </div>
