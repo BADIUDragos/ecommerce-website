@@ -109,3 +109,8 @@ class BillSerializer(serializers.Serializer):
     tax = serializers.DecimalField(max_digits=10, decimal_places=2)
     shipping = serializers.DecimalField(max_digits=10, decimal_places=2)
     total = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+
+class PayPalSerializer(serializers.Serializer):
+    client_id = serializers.CharField()
+    currency = serializers.CharField()
