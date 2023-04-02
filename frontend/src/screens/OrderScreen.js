@@ -4,9 +4,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { getOrderDetails, payOrder, markOrderAsShipped, markOrderAsDelivered } from "../actions/orderActions";
+import { getOrderDetails, markOrderAsShipped, markOrderAsDelivered } from "../actions/orderActions";
 import moment from "moment";
-import { ORDER_PAY_RESET, ORDER_SHIPPED_RESET, ORDER_DELIVERED_RESET } from '../constants/orderConstants'
+import { ORDER_SHIPPED_RESET, ORDER_DELIVERED_RESET } from '../constants/orderConstants'
 
 function OrderScreen() {
 
@@ -33,7 +33,6 @@ function OrderScreen() {
     }
 
     if (!order || order._id !== Number(id) || successShipped || successDelivered ) {
-      dispatch({type:ORDER_PAY_RESET})
       dispatch({type:ORDER_SHIPPED_RESET})
       dispatch({type:ORDER_DELIVERED_RESET})
       dispatch(getOrderDetails(id));
