@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from datetime import datetime
 
 from base.models import Product, Order, OrderItem, ShippingAddress
-from base.serializers import OrderSerializer, BillSerializer
+from base.serializers import OrderSerializer, BillSerializer, PayPalSerializer
 
 
 @api_view(['POST'])
@@ -130,7 +130,7 @@ def updateOrderToDelivered(request, pk):
     return Response('Order was delivered')
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def getPrices(request):
 
     subtotal = 0
@@ -157,4 +157,15 @@ def getPrices(request):
     total = subtotal + tax
 
     serializer = BillSerializer({'subtotal': subtotal, 'tax': tax, 'shipping': shipping, 'total': total})
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getPayPalInfo(request):
+
+    client_id = "AQePZy-SSCXcibd6BMmMP-ps5m1w_4xaQISOPBjcOfmOZ1UuHebHJaCKhUbvfm9AWM-BdzgdHIVjpkAY"
+    currency = "CAD"
+
+    serializer = PayPalSerializer({'client_id': client_id, 'currency': currency})
     return Response(serializer.data)
