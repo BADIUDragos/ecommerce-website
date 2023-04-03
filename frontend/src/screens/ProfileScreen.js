@@ -135,7 +135,7 @@ function ProfileScreen() {
                 <th>ID</th>
                 <th>DATE</th>
                 <th>TOTAL</th>
-                <th>Paid</th>
+                <th>Shipped</th>
                 <th>Delivered</th>
               </tr>
             </thead>
@@ -146,7 +146,10 @@ function ProfileScreen() {
                   <td>{order._id}</td>
                   <td>{moment(order.createdAt).format("MMMM Do, YYYY")}</td>
                   <td>${order.totalPrice}</td>
-                  <td>{order.isPaid ? moment(order.paidAt).format("MMMM Do, YYYY") : (
+                  <td>{order.isShipped ? moment(order.shippedAt).format("MMMM Do, YYYY") : (
+                    <i className="fas fa-times" style={{color: 'red'}}></i>
+                  )}</td>
+                  <td>{order.isDelivered ? moment(order.deliveredAt).format("MMMM Do, YYYY") : (
                     <i className="fas fa-times" style={{color: 'red'}}></i>
                   )}</td>
                   <td>
