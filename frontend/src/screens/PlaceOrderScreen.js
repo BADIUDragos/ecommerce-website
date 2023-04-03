@@ -6,7 +6,7 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import CheckoutSteps from "../components/CheckoutSteps";
 import { createOrder, getTotal, getPayPalInfo } from "../actions/orderActions";
-import { ORDER_CREATE_RESET } from "../constants/orderConstants";
+import { ORDER_CREATE_RESET, ORDER_CREATE_SUCCESS } from "../constants/orderConstants";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 function PayPalPayment(props) {
@@ -16,7 +16,7 @@ function PayPalPayment(props) {
   const navigate = useNavigate();
 
   const orderCreate = useSelector((state) => state.orderCreate);
-  const { order, error:errorCreateOrder, success } = orderCreate;
+  const { error:errorCreateOrder } = orderCreate;
 
   useEffect(() => {
     dispatch(getPayPalInfo());
@@ -45,8 +45,8 @@ function PayPalPayment(props) {
       })
     );
   
-    if (success) {
-      navigate(`/order/${order._id}`);
+    if (createOrderResult.type === ORDER_CREATE_SUCCESS) {
+      navigate(`/order/${createOrderResult.payload._id}`);
       dispatch({ type: ORDER_CREATE_RESET });
     }
   };
@@ -102,7 +102,7 @@ function OrderSummary(props) {
 
   useEffect(() => {
     dispatch(getTotal(items));
-  }, [dispatch, items]);
+  }, [dispatch]);
 
   const { error, loading, prices } = useSelector((state) => state.orderTotal);
   const { subtotal = 0, shipping = 0, tax = 0, total = 0 } = prices || {};

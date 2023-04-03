@@ -59,7 +59,7 @@ export const createOrder = (order) => async (dispatchEvent, getState) => {
       config
     );
 
-    dispatchEvent({
+    const dispatchedAction = dispatchEvent({
       type: ORDER_CREATE_SUCCESS,
       payload: data,
     });
@@ -70,6 +70,7 @@ export const createOrder = (order) => async (dispatchEvent, getState) => {
     });
 
     localStorage.removeItem('cartItems')
+    return dispatchedAction
 
   } catch (error) {
     dispatchEvent({

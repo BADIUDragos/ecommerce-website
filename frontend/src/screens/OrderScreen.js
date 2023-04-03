@@ -6,7 +6,7 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { getOrderDetails, markOrderAsShipped, markOrderAsDelivered } from "../actions/orderActions";
 import moment from "moment";
-import { ORDER_SHIPPED_RESET, ORDER_DELIVERED_RESET } from '../constants/orderConstants'
+import {  ORDER_SHIPPED_RESET, ORDER_DELIVERED_RESET } from '../constants/orderConstants'
 
 function OrderScreen() {
 
@@ -37,7 +37,7 @@ function OrderScreen() {
       dispatch({type:ORDER_DELIVERED_RESET})
       dispatch(getOrderDetails(id));
     }
-  }, [order, id, dispatch, successShipped, successDelivered, navigate, userInfo]);
+  }, [order, id, dispatch, successShipped, successDelivered]);
 
   const markAsShippedHandler = () => {
     dispatch(markOrderAsShipped(id))
@@ -99,7 +99,7 @@ function OrderScreen() {
 
               {order.isPaid ? (
                 <Message variant="success">
-                  Paid on {moment(order.paidAt).format("MMMM Do, YYYY")} at {moment(order.paidAt).format("h:mm a")} EST
+                  Paid on {moment(order.paidAt).format("MMMM Do, YYYY")}
                 </Message>
               ) : (
                 <Message variant="warning">Not paid</Message>
