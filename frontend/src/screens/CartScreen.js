@@ -21,6 +21,9 @@ function CartScreen() {
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -36,6 +39,10 @@ function CartScreen() {
 
   const checkoutHandler = () => {
     navigate("/shipping");
+  };
+
+  const loginHandler = () => {
+    navigate('/login');
   };
 
   return (
@@ -106,14 +113,24 @@ function CartScreen() {
           </ListGroup>
         </Card>
 
-        <Button
-          type="button"
-          className="btn-block mt-3 w-100"
-          disabled={cartItems.length === 0}
-          onClick={checkoutHandler}
-        >
-          CHECKOUT
-        </Button>
+        {userInfo ? (
+          <Button
+            type="button"
+            className="btn-block mt-3 w-100"
+            disabled={cartItems.length === 0}
+            onClick={checkoutHandler}
+          >
+            CHECKOUT
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            className="btn-block mt-3 w-100"
+            onClick={loginHandler}
+          >
+            LOGIN
+          </Button>
+        )}
       </Col>
     </Row>
   );

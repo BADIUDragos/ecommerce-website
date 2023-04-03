@@ -39,7 +39,7 @@ function ShippingScreen() {
           ></Form.Control>
         </Form.Group>
 
-        <Form.Group controlId="city">
+        <Form.Group controlId="city" class='mt-3'>
           <Form.Label>City:</Form.Label>
           <Form.Control
             required
@@ -50,7 +50,7 @@ function ShippingScreen() {
           ></Form.Control>
         </Form.Group>
 
-        <Form.Group controlId="postalCode">
+        <Form.Group controlId="postalCode" class='mt-3'>
           <Form.Label>Postal Code:</Form.Label>
           <Form.Control
             required
@@ -61,7 +61,7 @@ function ShippingScreen() {
           ></Form.Control>
         </Form.Group>
 
-        <Form.Group controlId="country">
+        <Form.Group controlId="country" class='mt-3'>
           <Form.Label>Country:</Form.Label>
           <OverlayTrigger
             placement="right"
