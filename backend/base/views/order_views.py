@@ -10,6 +10,8 @@ from datetime import datetime
 from base.models import Product, Order, OrderItem, ShippingAddress
 from base.serializers import OrderSerializer, BillSerializer, PayPalSerializer
 
+from base.signals import order_created
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -55,6 +57,8 @@ def addOrderItems(request):
 
             product.countInStock -= int(item.qty)
             product.save()
+
+            order_created.send(sender=Order, order=order)
 
             serializer = OrderSerializer(order, many=False)
 
