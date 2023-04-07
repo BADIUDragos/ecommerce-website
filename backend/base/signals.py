@@ -6,7 +6,7 @@ from django.dispatch import Signal
 from django.conf import settings
 from django.template.loader import render_to_string
 
-from backend.base.models import Order
+from base.models import Order
 
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
