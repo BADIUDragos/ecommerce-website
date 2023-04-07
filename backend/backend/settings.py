@@ -177,3 +177,8 @@ MEDIA_ROOT = 'backend/static/images'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# EMAIL
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
