@@ -28,7 +28,7 @@ function ProfileScreen() {
   const { userInfo } = userLogin;
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
-  const { success } = userUpdateProfile;
+  const { success, error: userUpdateError } = userUpdateProfile;
 
   const orderListMy = useSelector((state) => state.orderListMy);
   const { loading: loadingOrders, error: errorOrders, orders } = orderListMy;
@@ -50,8 +50,12 @@ function ProfileScreen() {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match");
+    if (!email || email.trim() === '') {
+      setMessage('Email is required');
+    } else if (!name || name.trim() === '') {
+      setMessage('Name is required');
+    } else if (password !== confirmPassword) {
+      setMessage('Passwords do not match');
     } else {
       dispatch(
         updateUserProfile({
@@ -61,7 +65,7 @@ function ProfileScreen() {
           password: password,
         })
       );
-      setMessage("");
+      setMessage('');
     }
   };
 
@@ -97,10 +101,10 @@ function ProfileScreen() {
           </Form.Group>
 
           <Form.Group controlId="password" className="mt-2">
-            <Form.Label>Password</Form.Label>
+            <Form.Label>New Password</Form.Label>
             <Form.Control
               type="password"
-              placeholder="Password"
+              placeholder="New Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             ></Form.Control>
@@ -116,9 +120,13 @@ function ProfileScreen() {
             ></Form.Control>
           </Form.Group>
 
-          <Button type="submit" variant="primary" className="btn-block w-100 mt-3">
+          <Button type="submit" variant="primary" className="btn-block w-100 mt-3 mb-3">
             Update
           </Button>
+
+          {success ? <Message variant='success' style={{ textAlign: 'center' }}>User details successfully updated!</Message> : null}
+          {userUpdateError ? <Message variant='danger' style={{ textAlign: 'center' }}>{userUpdateError}</Message> : null}
+
         </Form>
       </Col>
 
