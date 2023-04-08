@@ -2,8 +2,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+
 from base.serializers import UserSerializer, UserSerializerWithToken
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -57,7 +59,16 @@ def updateUserProfile(request):
     data = request.data
     user.first_name = data["name"]
     user.username = data["email"]
-    user.email = data["email"]
+
+    email = data["email"]
+    try:
+        existing_user = User.objects.get(email=email)
+        if existing_user != user:
+            return Response({"detail": "A user with this email already exists."}, status=status.HTTP_400_BAD_REQUEST)
+    except ObjectDoesNotExist:
+        pass
+
+    user.email = email
 
     if data['password'] != "":
         user.password = make_password(data["password"])
