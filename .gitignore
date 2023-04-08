@@ -23,3 +23,4 @@ backend/base/views/__pycache__/user_views.cpython-310.pyc
 backend/backend/.env
 .venv
 .idea
+backend/backend/external_settings.py
