@@ -41,6 +41,7 @@ function LoginScreen() {
         <Form.Group controlId="email">
           <Form.Label>Email Address</Form.Label>
           <Form.Control
+            required
             type="email"
             placeholder="Enter Email"
             value={email}
@@ -51,6 +52,7 @@ function LoginScreen() {
         <Form.Group controlId="password" className="mt-3">
           <Form.Label>Password</Form.Label>
           <Form.Control
+            required
             type="password"
             placeholder="Enter Password"
             value={password}
