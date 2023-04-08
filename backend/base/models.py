@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+
 class Product(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200, null=True, blank=True)
@@ -20,6 +21,7 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
 class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -31,6 +33,7 @@ class Review(models.Model):
 
     def __str__(self):
         return str(self.rating)
+
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -55,6 +58,7 @@ class Order(models.Model):
     def order_id(self):
         return self._id
 
+
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
@@ -66,6 +70,7 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return str(self.name)
+
 
 class ShippingAddress(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE, null=True, blank=True)
