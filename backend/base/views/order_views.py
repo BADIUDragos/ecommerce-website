@@ -10,7 +10,7 @@ from datetime import datetime
 from base.models import Product, Order, OrderItem, ShippingAddress
 from base.serializers import OrderSerializer, BillSerializer, PayPalSerializer
 
-from base.signals import order_created
+from base.signals import order_created, order_shipped, order_delivered
 
 
 @api_view(['POST'])
@@ -108,6 +108,8 @@ def updateOrderToShipped(request, pk):
     order.shippedAt = datetime.now()
     order.save()
 
+    order_shipped.send(sender=Order, order=order)
+
     return Response('Order was delivered')
 
 @api_view(['PUT'])
@@ -120,6 +122,8 @@ def updateOrderToDelivered(request, pk):
     order.isDelivered = True
     order.deliveredAt = datetime.now()
     order.save()
+
+    order_delivered.send(sender=Order, order=order)
 
     return Response('Order was delivered')
 
