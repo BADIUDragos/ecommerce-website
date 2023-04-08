@@ -52,10 +52,10 @@ def registerUser(request):
 
     try:
         user = User.objects.create(
-            first_name = data['name'],
-            username = data['email'],
-            email = data['email'],
-            password = make_password(data['password'])
+            first_name=data['name'],
+            username=data['email'],
+            email=data['email'],
+            password=make_password(data['password'])
         )
 
         serializer = UserSerializerWithToken(user, many=False)
