@@ -41,7 +41,7 @@ def send_order_confirmation_update_to_owner(order):
         email_subject,
         email_text_body,
         settings.EMAIL_HOST_USER,
-        ['valentin.prunoiu@annedora.ca'],
+        ['dragos.badiu.a@hotmail.com'],
     )
 
     email.attach_alternative(email_html_body, "text/html")
@@ -58,6 +58,7 @@ def send_order_confirmation_email(sender, order, **kwargs):
         'order': order,
         'order_items': order_items,
     }
+
     email_html_body = render_to_string('UserOrderConfirmation.html', context)
     email_text_body = strip_tags(email_html_body)
 

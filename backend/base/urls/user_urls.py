@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from base.views import user_views as views
 
 urlpatterns = [
@@ -12,4 +12,7 @@ urlpatterns = [
     path('<str:pk>', views.getUserById, name='user'),
     path('update/<str:pk>', views.updateUserProfileAdmin, name='user-update'),
     path('delete/<str:pk>', views.deleteUser, name='user-delete'),
+    path('password-reset/', views.forgot_password, name='user-password-reset'),
+    path('validate_token/', views.validate_token, name='validate_token'),
+    path('update_password/', views.update_password, name='user-update_password'),
 ]

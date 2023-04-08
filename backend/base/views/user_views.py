@@ -1,6 +1,17 @@
+import os
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.html import strip_tags
+from django.utils.encoding import force_bytes
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMultiAlternatives
+from email.mime.image import MIMEImage
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
@@ -11,6 +22,11 @@ from base.serializers import UserSerializer, UserSerializerWithToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
+
+from django.conf import settings
+
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -51,6 +67,99 @@ def registerUser(request):
         message = {'detail': 'Email is already registerd'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['POST'])
+def forgot_password(request):
+
+    email = request.data.get('email')
+
+    user = User.objects.filter(email=email).first()
+
+    if user:
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # current_site = get_current_site(request)
+        # domain = current_site.domain
+        reset_link = f"http://localhost:3000/#/changepassword?uid={uid}&token={token}"
+
+        context = {
+            'user': user.username,
+            'reset_link': reset_link,
+        }
+
+        email_subject = "Password Reset"
+        email_html_body = render_to_string('PasswordResetEmail.html', context)
+        email_text_body = strip_tags(email_html_body)
+
+        email = EmailMultiAlternatives(
+            email_subject,
+            email_text_body,
+            settings.EMAIL_HOST_USER,
+            [user.email],
+        )
+
+        email.attach_alternative(email_html_body, "text/html")
+
+        image_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo_cut.png')
+        with open(image_path, "rb") as f:
+            logo_data = f.read()
+        logo = MIMEImage(logo_data)
+        logo.add_header('Content-ID', '<logo_cut>')
+        logo.add_header('Content-Disposition', 'inline', filename="logo_cut.png")
+        email.attach(logo)
+
+        email.send(fail_silently=False)
+        return Response({"detail": "Password reset email sent."})
+    else:
+        return Response({"detail": "No user associated with this email account was found."})
+
+
+@api_view(['GET'])
+def validate_token(request):
+
+    uidb64 = request.data.get('uidb64')
+    token = request.data.get('token')
+
+    if request.method == 'GET':
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except (User.DoesNotExist, ValueError, OverflowError):
+            return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if default_token_generator.check_token(user, token):
+            return Response({"detail": "Token is valid."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Token is invalid or has expired."}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"detail": "Invalid request method."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['POST'])
+def update_password(request):
+
+    uidb64 = request.data.get('uidb64')
+    token = request.data.get('token')
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (User.DoesNotExist, ValueError, OverflowError):
+        return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if default_token_generator.check_token(user, token):
+        new_password = request.data.get('password', None)
+        if new_password:
+            user.password = make_password(new_password)
+            user.save()
+            return Response({"detail": "Password updated successfully."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "New password is missing."}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"detail": "Token is invalid or has expired."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def updateUserProfile(request):
@@ -77,6 +186,7 @@ def updateUserProfile(request):
 
     serializer = UserSerializerWithToken(user, many=False)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
