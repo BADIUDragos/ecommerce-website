@@ -11,7 +11,7 @@ import {
   Card,
 } from "react-bootstrap";
 import Message from "../components/Message";
-import { addToCart, removeFromCart } from "../actions/cartActions";
+import { addToCart, editItemQuantity, removeFromCart } from "../actions/cartActions";
 
 function CartScreen() {
   const { id } = useParams();
@@ -71,7 +71,7 @@ function CartScreen() {
                       value={item.qty}
                       onChange={(e) =>
                         dispatch(
-                          addToCart(item.product, Number(e.target.value))
+                          editItemQuantity(item.product, Number(e.target.value))
                         )
                       }
                     >
