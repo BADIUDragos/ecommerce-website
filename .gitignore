@@ -21,3 +21,5 @@ backend/base/views/__pycache__/order_views.cpython-310.pyc
 backend/base/views/__pycache__/product_views.cpython-310.pyc
 backend/base/views/__pycache__/user_views.cpython-310.pyc
 backend/backend/.env
+.venv
+.idea
