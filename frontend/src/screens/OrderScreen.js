@@ -40,11 +40,15 @@ function OrderScreen() {
   }, [order, id, dispatch, successShipped, successDelivered]);
 
   const markAsShippedHandler = () => {
-    dispatch(markOrderAsShipped(id))
+    if (window.confirm("Are you sure you shipped this product ?")) {
+      dispatch(markOrderAsShipped(id))
+    }
   }
 
   const markAsDeliveredHandler = () => {
-    dispatch(markOrderAsDelivered(id))
+    if (window.confirm("Are you sure this product was delivered ?")) {
+      dispatch(markOrderAsDelivered(id))
+    }
   }
 
   return loading ? (
