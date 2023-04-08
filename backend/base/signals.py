@@ -25,6 +25,29 @@ pre_save.connect(updateUser, sender=User)
 order_created = Signal()
 
 
+def send_order_confirmation_update_to_owner(order):
+    user = order.user
+    order_items = order.orderitem_set.all()
+    email_subject = 'Noua comanda'
+    context = {
+        'user': user,
+        'order': order,
+        'order_items': order_items,
+    }
+    email_html_body = render_to_string('NewOrderConfirmationToShip.html', context)
+    email_text_body = strip_tags(email_html_body)
+
+    email = EmailMultiAlternatives(
+        email_subject,
+        email_text_body,
+        settings.EMAIL_HOST_USER,
+        ['dragos.badiu.a@hotmail.com'],
+    )
+
+    email.attach_alternative(email_html_body, "text/html")
+    email.send(fail_silently=False)
+
+
 def send_order_confirmation_email(sender, order, **kwargs):
     user = order.user
     order_items = order.orderitem_set.all()
@@ -35,7 +58,7 @@ def send_order_confirmation_email(sender, order, **kwargs):
         'order': order,
         'order_items': order_items,
     }
-    email_html_body = render_to_string('OrderConfirmation.html', context)
+    email_html_body = render_to_string('UserOrderConfirmation.html', context)
     email_text_body = strip_tags(email_html_body)
 
     email = EmailMultiAlternatives(
@@ -58,6 +81,8 @@ def send_order_confirmation_email(sender, order, **kwargs):
     email.attach(logo)
 
     email.send(fail_silently=False)
+
+    send_order_confirmation_update_to_owner(order)
 
 
 order_created.connect(send_order_confirmation_email, sender=Order)

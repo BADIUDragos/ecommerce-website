@@ -6,19 +6,19 @@
   </head>
   <body>
     <div>
-      <img src="cid:logo_cut" alt="Annedora" style="max-width: 800px" />
       <h2>Order Confirmation</h2>
-      <p>Dear {{ user.first_name }},</p>
-      <p>Thank you for your order!</p>
-      <p>Your order details are as follows:</p>
-      <p>Order ID: {{ order.order_id }}</p>
+      <p>O noua comanda pentru: {{ user.first_name }},</p>
+      <p>Adresa comenzii: {{ order.shippingaddress.city }}, {{ order.shippingaddress.address}},
+        {{order.shippingaddress.postalCode }}</p>
+      <p>Detaliile comenzii:</p>
+      <p>Numarul comenzii: {{ order.order_id }}</p>
 
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>Price</th>
+            <th>Produs</th>
+            <th>Cantitate</th>
+            <th>Pret</th>
           </tr>
         </thead>
         <tbody>
