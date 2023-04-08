@@ -41,7 +41,7 @@ def send_order_confirmation_update_to_owner(order):
         email_subject,
         email_text_body,
         settings.EMAIL_HOST_USER,
-        ['dragos.badiu.a@hotmail.com'],
+        ['valentin.prunoiu@annedora.ca'],
     )
 
     email.attach_alternative(email_html_body, "text/html")
