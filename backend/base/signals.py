@@ -28,7 +28,7 @@ order_created = Signal()
 def send_order_confirmation_update_to_owner(order):
     user = order.user
     order_items = order.orderitem_set.all()
-    email_subject = 'Noua comanda'
+    email_subject = 'Comanda noua'
     context = {
         'user': user,
         'order': order,
