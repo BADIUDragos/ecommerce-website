@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
@@ -11,19 +11,19 @@ function ResetPasswordScreen() {
 
   const dispatch = useDispatch();
 
-  const passwordReset = useSelector((state) => state.userPasswordReset)
-  const { success, loading, error} = passwordReset
+  const passwordReset = useSelector((state) => state.userPasswordReset);
+  const { success, loading, error } = passwordReset;
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(resetPasswordRequest(email))
-  }
+    dispatch(resetPasswordRequest(email));
+  };
 
   return (
     <FormContainer>
       <h1>Reset Password</h1>
 
-      {!success && 
+      {!success && (
         <Form onSubmit={submitHandler}>
           <Form.Group controlId="email">
             <Form.Label>Please enter your email address:</Form.Label>
@@ -36,17 +36,23 @@ function ResetPasswordScreen() {
             ></Form.Control>
           </Form.Group>
 
-          <Button type="submit" variant="primary" className="btn-block w-100 mt-3 mb-3 visible">
+          <Button
+            type="submit"
+            variant="primary"
+            className="btn-block w-100 mt-3 mb-3"
+          >
             Reset Password
           </Button>
         </Form>
-      }
+      )}
 
       {error && <Message variant="danger">{error}</Message>}
-      {success && 
-      <Message variant="success">Please check your email in order to reset your password.</Message>}
+      {success && (
+        <Message variant="success">
+          Please check your email in order to reset your password.
+        </Message>
+      )}
       {loading && <Loader />}
-     
     </FormContainer>
   );
 }
