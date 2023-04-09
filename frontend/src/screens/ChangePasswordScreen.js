@@ -22,7 +22,6 @@ function ResetPasswordScreen() {
 
   useEffect(() => {
     dispatch(resetPasswordVerifyToken(uid, token));
-    console.log(uid, token)
   }, [dispatch]);
 
   const passwordResetValidate = useSelector((state) => state.userPasswordResetValidate);
