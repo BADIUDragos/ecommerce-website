@@ -5,7 +5,7 @@ import { productListReducer, productDetailsReducer, productDeleteReducer, produc
         productTopReducer } from './reducers/productReducers'
 import { cartReducer } from './reducers/cartReducers'
 import { userLoginReducer, userRegisterReducer, userDetailsReducer, userUpdateProfileReducer, 
-        userListReducer, userDeleteReducer, userUpdateReducer } from './reducers/userReducers'
+        userListReducer, userDeleteReducer, userUpdateReducer, userPasswordResetReducer } from './reducers/userReducers'
 import { orderCreateReducer, orderDetailsReducer, orderListMyReducer, orderListReducer, orderShippedReducer, orderDeliveredReducer, orderTotalReducer, orderPayPalInfoReducer } from './reducers/orderReducers'
 
 const cartItemsFromStorage = localStorage.getItem('cartItems') ?
@@ -37,6 +37,7 @@ const store = configureStore({
         userRegister: userRegisterReducer,
         userDetails: userDetailsReducer,
         userUpdateProfile: userUpdateProfileReducer,
+        userPasswordReset: userPasswordResetReducer,
         userList: userListReducer,
         userDelete: userDeleteReducer,
         userUpdate: userUpdateReducer,

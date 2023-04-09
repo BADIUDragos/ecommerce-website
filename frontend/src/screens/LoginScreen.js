@@ -71,6 +71,12 @@ function LoginScreen() {
             Register
           </Link>
         </Col>
+        <Col>
+          Forgot Password?{" "}
+          <Link to={`/resetpassword`}>
+            Reset Password
+          </Link>
+        </Col>
       </Row>
     </FormContainer>
   );

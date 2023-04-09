@@ -22,6 +22,7 @@ import UserEditScreen from "./screens/UserEditScreen";
 
 import ProductListScreen from "./screens/ProductListScreen";
 import ProductEditScreen from "./screens/ProductEditScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/" element={<HomeScreen/>}></Route>
             <Route path="/login" element={<LoginScreen/>}></Route>
             <Route path="/register" element={<RegisterScreen/>}></Route>
+            <Route path="/resetpassword" element={<ResetPasswordScreen/>}></Route>
             <Route path="/profile" element={<ProfileScreen/>}></Route>
             <Route path="/shipping" element={<ShippingScreen/>}></Route>
             <Route path="/payment" element={<PaymentScreen/>}></Route>

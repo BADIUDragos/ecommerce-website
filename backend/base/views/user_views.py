@@ -73,46 +73,47 @@ def forgot_password(request):
 
     email = request.data.get('email')
 
-    user = User.objects.filter(email=email).first()
+    try:
+        user = User.objects.get(email=email)
+    except ObjectDoesNotExist:
+        return Response({"detail": "No user associated with this email account was found."},
+                        status=status.HTTP_400_BAD_REQUEST)
 
-    if user:
-        token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-        # current_site = get_current_site(request)
-        # domain = current_site.domain
-        reset_link = f"http://localhost:3000/#/changepassword?uid={uid}&token={token}"
+    # current_site = get_current_site(request)
+    # domain = current_site.domain
+    reset_link = f"http://localhost:3000/#/changepassword?uid={uid}&token={token}"
 
-        context = {
-            'user': user.username,
-            'reset_link': reset_link,
-        }
+    context = {
+        'user': user.username,
+        'reset_link': reset_link,
+    }
 
-        email_subject = "Password Reset"
-        email_html_body = render_to_string('PasswordResetEmail.html', context)
-        email_text_body = strip_tags(email_html_body)
+    email_subject = "Password Reset"
+    email_html_body = render_to_string('PasswordResetEmail.html', context)
+    email_text_body = strip_tags(email_html_body)
 
-        email = EmailMultiAlternatives(
-            email_subject,
-            email_text_body,
-            settings.EMAIL_HOST_USER,
-            [user.email],
-        )
+    email = EmailMultiAlternatives(
+        email_subject,
+        email_text_body,
+        settings.EMAIL_HOST_USER,
+        [user.email],
+    )
 
-        email.attach_alternative(email_html_body, "text/html")
+    email.attach_alternative(email_html_body, "text/html")
 
-        image_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo_cut.png')
-        with open(image_path, "rb") as f:
-            logo_data = f.read()
-        logo = MIMEImage(logo_data)
-        logo.add_header('Content-ID', '<logo_cut>')
-        logo.add_header('Content-Disposition', 'inline', filename="logo_cut.png")
-        email.attach(logo)
+    image_path = os.path.join(settings.BASE_DIR, 'static', 'images', 'logo_cut.png')
+    with open(image_path, "rb") as f:
+        logo_data = f.read()
+    logo = MIMEImage(logo_data)
+    logo.add_header('Content-ID', '<logo_cut>')
+    logo.add_header('Content-Disposition', 'inline', filename="logo_cut.png")
+    email.attach(logo)
 
-        email.send(fail_silently=False)
-        return Response({"detail": "Password reset email sent."})
-    else:
-        return Response({"detail": "No user associated with this email account was found."})
+    email.send(fail_silently=False)
+    return Response({"detail": "Password reset email sent."}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
