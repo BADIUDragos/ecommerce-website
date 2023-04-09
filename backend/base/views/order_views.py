@@ -60,7 +60,7 @@ def addOrderItems(request):
 
             order_created.send(sender=Order, order=order)
 
-            serializer = OrderSerializer(order, many=False)
+        serializer = OrderSerializer(order, many=False)
 
         return Response(serializer.data)
 

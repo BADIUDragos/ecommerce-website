@@ -147,7 +147,7 @@ function OrderScreen() {
         </Col>
 
         <Col md={4}>
-          <Card>
+          <Card className="mb-4">
             <ListGroup variant="flush">
               <ListGroup.Item>
                 <h2>Order Summary</h2>
@@ -204,6 +204,10 @@ function OrderScreen() {
             )}
 
           </Card>
+
+          {loadingShipped && <Loader className='mt-3'/>}
+          {loadingDelivered && <Loader className='mt-3'/>}
+
         </Col>
       </Row>
     </div>
