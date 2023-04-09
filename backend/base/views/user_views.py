@@ -84,7 +84,7 @@ def forgot_password(request):
 
     # current_site = get_current_site(request)
     # domain = current_site.domain
-    reset_link = f"http://localhost:3000/#/changepassword?uid={uid}&token={token}"
+    reset_link = "http://localhost:3000/#/changepassword?uid=%s&token=%s" % (uid, token)
 
     context = {
         'user': user.username,
