@@ -5,10 +5,8 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode
+from django.utils.http import int_to_base36, base36_to_int
 from django.utils.html import strip_tags
-from django.utils.encoding import force_bytes
-from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMultiAlternatives
 from email.mime.image import MIMEImage
@@ -80,10 +78,8 @@ def forgot_password(request):
                         status=status.HTTP_400_BAD_REQUEST)
 
     token = default_token_generator.make_token(user)
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    uid = int_to_base36(user.pk)
 
-    # current_site = get_current_site(request)
-    # domain = current_site.domain
     reset_link = "http://localhost:3000/#/changepassword?uid=%s&token=%s" % (uid, token)
 
     context = {
@@ -119,12 +115,15 @@ def forgot_password(request):
 @api_view(['GET'])
 def validate_token(request):
 
-    uidb64 = request.data.get('uidb64')
-    token = request.data.get('token')
+    uidb36 = request.query_params.get('uid')
+    token = request.query_params.get('token')
 
     if request.method == 'GET':
+        if uidb36 is None or token is None:
+            return Response({"detail": "Missing token or UID."}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
+            uid = base36_to_int(uidb36)
             user = User.objects.get(pk=uid)
         except (User.DoesNotExist, ValueError, OverflowError):
             return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
@@ -140,11 +139,14 @@ def validate_token(request):
 @api_view(['POST'])
 def update_password(request):
 
-    uidb64 = request.data.get('uidb64')
+    uidb36 = request.data.get('uid')
     token = request.data.get('token')
 
+    if uidb36 is None or token is None:
+        return Response({"detail": "Missing token or UID."}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
+        uid = base36_to_int(uidb36)
         user = User.objects.get(pk=uid)
     except (User.DoesNotExist, ValueError, OverflowError):
         return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
