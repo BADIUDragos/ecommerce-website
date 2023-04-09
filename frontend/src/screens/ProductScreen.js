@@ -156,10 +156,10 @@ function ProductScreen() {
                   >
                     ADD TO CART
                   </Button>
-                  {showAddToCartSuccess ? <Message variant='success' style={{ textAlign: 'center' }}>Items added to cart!</Message> : null}
                 </ListGroup.Item>
               </ListGroup>
             </Card>
+            {showAddToCartSuccess ? <Message variant='success' className='mt-3' style={{ textAlign: 'center' }}>Items added to cart!</Message> : null}
           </Col>
         </Row>
         <Row>
