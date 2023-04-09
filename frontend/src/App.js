@@ -23,6 +23,7 @@ import UserEditScreen from "./screens/UserEditScreen";
 import ProductListScreen from "./screens/ProductListScreen";
 import ProductEditScreen from "./screens/ProductEditScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import ChangePasswordScreen from './screens/ChangePasswordScreen'
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="/login" element={<LoginScreen/>}></Route>
             <Route path="/register" element={<RegisterScreen/>}></Route>
             <Route path="/resetpassword" element={<ResetPasswordScreen/>}></Route>
+            <Route path="/changepassword" element={<ChangePasswordScreen/>}></Route>
             <Route path="/profile" element={<ProfileScreen/>}></Route>
             <Route path="/shipping" element={<ShippingScreen/>}></Route>
             <Route path="/payment" element={<PaymentScreen/>}></Route>

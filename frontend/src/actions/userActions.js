@@ -26,7 +26,10 @@ import {
   USER_UPDATE_FAIL,
   USER_PASSWORD_RESET_REQUEST,
   USER_PASSWORD_RESET_SUCCESS,
-  USER_PASSWORD_RESET_FAIL
+  USER_PASSWORD_RESET_FAIL,
+  USER_PASSWORD_RESET_VALIDATE_TOKEN_REQUEST,
+  USER_PASSWORD_RESET_VALIDATE_TOKEN_SUCCESS,
+  USER_PASSWORD_RESET_VALIDATE_TOKEN_FAIL,
 } from "../constants/userConstants";
 
 import { ORDER_LIST_MY_RESET } from "../constants/orderConstants";
@@ -335,6 +338,40 @@ export const resetPasswordRequest = (email) => async (dispatchEvent) => {
   } catch (error) {
     dispatchEvent({
       type: USER_PASSWORD_RESET_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const resetPasswordVerifyToken = (uid, token) => async (dispatchEvent) => {
+  try {
+    dispatchEvent({
+      type: USER_PASSWORD_RESET_VALIDATE_TOKEN_REQUEST,
+    });
+
+    const config = {
+      params: { uid: uid, token: token },
+      headers: {
+        "Content-type": "application/json",
+      },
+    };
+
+    const { data } = await axios.get(
+      "/api/users/validate_token/",
+      config
+    );
+
+    dispatchEvent({
+      type: USER_PASSWORD_RESET_VALIDATE_TOKEN_SUCCESS,
+      payload: data,
+    });
+
+  } catch (error) {
+    dispatchEvent({
+      type: USER_PASSWORD_RESET_VALIDATE_TOKEN_FAIL,
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail

@@ -1,38 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
-import { resetPasswordRequest } from "../actions/userActions";
+import { resetPasswordVerifyToken } from "../actions/userActions";
 
 function ResetPasswordScreen() {
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const uid = searchParams.get("uid");
+  const token = searchParams.get("token");
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [message, setMessage] = useState("")
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(resetPasswordVerifyToken(uid, token));
+    console.log(uid, token)
+  }, [dispatch]);
+
+  const passwordResetValidate = useSelector((state) => state.userPasswordResetValidate);
+  const { loading: loadingValidate, error: errorValidate } = passwordResetValidate;
 
   const passwordReset = useSelector((state) => state.userPasswordReset);
   const { success, loading, error } = passwordReset;
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(resetPasswordRequest(email));
+    if (password !== confirmPassword) {
+      setMessage('Passwords do not match');
+    } else {
+      dispatch()
+    }
   };
 
   return (
     <FormContainer>
-      <h1>Reset Password</h1>
+      <h1>Change Password</h1>
 
-      {!success && (
+      {loadingValidate && <Loader/>}
+
+      {!success && !errorValidate && !loadingValidate && (
         <Form onSubmit={submitHandler}>
-          <Form.Group controlId="email">
-            <Form.Label>Please enter your email address:</Form.Label>
+          <Form.Group controlId="password">
+            <Form.Label>New Password:</Form.Label>
             <Form.Control
               required
-              type="email"
-              placeholder="Enter Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="password"
+              placeholder="Enter a new password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
+
+          <Form.Group controlId="confirm-password" className="mt-3">
+            <Form.Label>Confirm Password:</Form.Label>
+            <Form.Control
+              required
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             ></Form.Control>
           </Form.Group>
 
@@ -46,6 +80,7 @@ function ResetPasswordScreen() {
         </Form>
       )}
 
+      {errorValidate && <Message variant="danger">{errorValidate}</Message>}
       {error && <Message variant="danger">{error}</Message>}
       {success && (
         <Message variant="success">

@@ -27,7 +27,13 @@ import {
   USER_UPDATE_RESET,
   USER_PASSWORD_RESET_REQUEST,
   USER_PASSWORD_RESET_SUCCESS,
-  USER_PASSWORD_RESET_FAIL
+  USER_PASSWORD_RESET_FAIL,
+  USER_PASSWORD_RESET_VALIDATE_TOKEN_REQUEST,
+  USER_PASSWORD_RESET_VALIDATE_TOKEN_SUCCESS,
+  USER_PASSWORD_RESET_VALIDATE_TOKEN_FAIL,
+  USER_PASSWORD_RESET_CHANGE_REQUEST,
+  USER_PASSWORD_RESET_CHANGE_SUCCESS,
+  USER_PASSWORD_RESET_CHANGE_FAIL
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -152,6 +158,34 @@ export const userPasswordResetReducer = (state = {}, action) => {
     case USER_PASSWORD_RESET_SUCCESS:
       return { loading: false, success: true };
     case USER_PASSWORD_RESET_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const userPasswordResetReducerValidateToken = (state = {}, action) => {
+  switch (action.type) {
+    case USER_PASSWORD_RESET_VALIDATE_TOKEN_REQUEST:
+      return { loading: true };
+    case USER_PASSWORD_RESET_VALIDATE_TOKEN_SUCCESS:
+      return { loading: false };
+    case USER_PASSWORD_RESET_VALIDATE_TOKEN_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const userPasswordResetReducerChange = (state = {}, action) => {
+  switch (action.type) {
+    case USER_PASSWORD_RESET_CHANGE_REQUEST:
+      return { loading: true };
+    case USER_PASSWORD_RESET_CHANGE_SUCCESS:
+      return { loading: false };
+    case USER_PASSWORD_RESET_CHANGE_FAIL:
       return { loading: false, error: action.payload };
 
     default:
