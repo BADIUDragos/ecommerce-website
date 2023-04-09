@@ -30,6 +30,9 @@ import {
   USER_PASSWORD_RESET_VALIDATE_TOKEN_REQUEST,
   USER_PASSWORD_RESET_VALIDATE_TOKEN_SUCCESS,
   USER_PASSWORD_RESET_VALIDATE_TOKEN_FAIL,
+  USER_PASSWORD_RESET_CHANGE_REQUEST,
+  USER_PASSWORD_RESET_CHANGE_SUCCESS,
+  USER_PASSWORD_RESET_CHANGE_FAIL,
 } from "../constants/userConstants";
 
 import { ORDER_LIST_MY_RESET } from "../constants/orderConstants";
@@ -346,7 +349,7 @@ export const resetPasswordRequest = (email) => async (dispatchEvent) => {
   }
 };
 
-export const resetPasswordVerifyToken = (uid, token) => async (dispatchEvent) => {
+export const resetPasswordRequestVerifyToken = (uid, token) => async (dispatchEvent) => {
   try {
     dispatchEvent({
       type: USER_PASSWORD_RESET_VALIDATE_TOKEN_REQUEST,
@@ -372,6 +375,40 @@ export const resetPasswordVerifyToken = (uid, token) => async (dispatchEvent) =>
   } catch (error) {
     dispatchEvent({
       type: USER_PASSWORD_RESET_VALIDATE_TOKEN_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const changePasswordRequest = (uid, token, password) => async (dispatchEvent) => {
+  try {
+    dispatchEvent({
+      type: USER_PASSWORD_RESET_CHANGE_REQUEST,
+    });
+
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+      },
+    };
+
+    const { data } = await axios.post(
+      "/api/users/update_password/",
+      { uid: uid, token: token, password: password },
+      config
+    );
+
+    dispatchEvent({
+      type: USER_PASSWORD_RESET_CHANGE_SUCCESS,
+      payload: data,
+    });
+
+  } catch (error) {
+    dispatchEvent({
+      type: USER_PASSWORD_RESET_CHANGE_FAIL,
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail

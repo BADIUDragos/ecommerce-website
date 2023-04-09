@@ -184,7 +184,7 @@ export const userPasswordResetReducerChange = (state = {}, action) => {
     case USER_PASSWORD_RESET_CHANGE_REQUEST:
       return { loading: true };
     case USER_PASSWORD_RESET_CHANGE_SUCCESS:
-      return { loading: false };
+      return { loading: false, success: true};
     case USER_PASSWORD_RESET_CHANGE_FAIL:
       return { loading: false, error: action.payload };
 

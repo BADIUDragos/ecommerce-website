@@ -13,6 +13,6 @@ urlpatterns = [
     path('update/<str:pk>', views.updateUserProfileAdmin, name='user-update'),
     path('delete/<str:pk>', views.deleteUser, name='user-delete'),
     path('password_reset/', views.forgot_password, name='user-password-reset'),
-    path('validate_token/', views.validate_token, name='validate_token'),
-    path('update_password/', views.update_password, name='user-update_password'),
+    path('validate_token/', views.validate_token, name='user-validate-reset-token'),
+    path('update_password/', views.update_password, name='user-change-password'),
 ]

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
-import { resetPasswordVerifyToken } from "../actions/userActions";
+import { resetPasswordRequestVerifyToken, changePasswordRequest } from "../actions/userActions";
 
 function ResetPasswordScreen() {
   const location = useLocation();
@@ -21,21 +21,21 @@ function ResetPasswordScreen() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(resetPasswordVerifyToken(uid, token));
+    dispatch(resetPasswordRequestVerifyToken(uid, token));
   }, [dispatch]);
 
   const passwordResetValidate = useSelector((state) => state.userPasswordResetValidate);
   const { loading: loadingValidate, error: errorValidate } = passwordResetValidate;
 
-  const passwordReset = useSelector((state) => state.userPasswordReset);
-  const { success, loading, error } = passwordReset;
+  const passwordChange = useSelector((state) => state.userPasswordResetChange);
+  const { success: successChange, loading: loadingChange, error: errorChange } = passwordChange;
 
   const submitHandler = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setMessage('Passwords do not match');
     } else {
-      dispatch()
+      dispatch(changePasswordRequest(uid, token, password))
     }
   };
 
@@ -45,7 +45,7 @@ function ResetPasswordScreen() {
 
       {loadingValidate && <Loader/>}
 
-      {!success && !errorValidate && !loadingValidate && (
+      {!successChange && !errorValidate && !loadingValidate && (
         <Form onSubmit={submitHandler}>
           <Form.Group controlId="password">
             <Form.Label>New Password:</Form.Label>
@@ -76,17 +76,21 @@ function ResetPasswordScreen() {
           >
             Reset Password
           </Button>
+
+          {message && <Message variant="danger">{message}</Message>}
+          {errorChange && <Message variant="danger">{errorChange}</Message>}
+
         </Form>
       )}
 
       {errorValidate && <Message variant="danger">{errorValidate}</Message>}
-      {error && <Message variant="danger">{error}</Message>}
-      {success && (
+      {errorChange && <Message variant="danger">{errorChange}</Message>}
+      {successChange && (
         <Message variant="success">
-          Please check your email in order to reset your password.
+          Password was changed successfully.
         </Message>
       )}
-      {loading && <Loader />}
+      {loadingChange && <Loader />}
     </FormContainer>
   );
 }

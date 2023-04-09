@@ -139,8 +139,8 @@ def validate_token(request):
 @api_view(['POST'])
 def update_password(request):
 
-    uidb36 = request.data.get('uid')
-    token = request.data.get('token')
+    uidb36 = request.data['uid']
+    token = request.data['token']
 
     if uidb36 is None or token is None:
         return Response({"detail": "Missing token or UID."}, status=status.HTTP_400_BAD_REQUEST)
