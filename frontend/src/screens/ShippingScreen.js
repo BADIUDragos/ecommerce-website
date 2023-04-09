@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +16,14 @@ function ShippingScreen() {
   const [address, setAddress] = useState(shippingAddress.address);
   const [city, setCity] = useState(shippingAddress.city);
   const [postalCode, setPostalCode] = useState(shippingAddress.postalCode);
+
+  const userDetails = useSelector((state) => state.userDetails);
+
+  useEffect(() => {
+    if (!userDetails){
+      navigate('/')
+    }
+  }, [navigate, userDetails])
 
   const submitHandler = (e) => {
     e.preventDefault();

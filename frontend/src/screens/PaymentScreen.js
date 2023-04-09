@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +20,14 @@ function PaymentScreen() {
   if(!shippingAddress.address) {
     navigate('/shipping')
   }
+
+  const userDetails = useSelector((state) => state.userDetails);
+
+  useEffect(() => {
+    if (!userDetails){
+      navigate('/')
+    }
+  }, [navigate, userDetails])
 
   const submitHandler = (e) =>{
     e.preventDefault()

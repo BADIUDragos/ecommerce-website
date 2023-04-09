@@ -18,9 +18,14 @@ function PayPalPayment(props) {
   const orderCreate = useSelector((state) => state.orderCreate);
   const { error:errorCreateOrder } = orderCreate;
 
+  const userDetails = useSelector((state) => state.userDetails);
+
   useEffect(() => {
+    if (!userDetails){
+      navigate('/')
+    }
     dispatch(getPayPalInfo());
-  }, [dispatch]);
+  }, [dispatch, navigate, userDetails]);
 
   if (!cart.paymentMethod) {
     navigate("/payment");
