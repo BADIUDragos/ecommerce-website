@@ -46,7 +46,7 @@ function PaymentScreen() {
           <Col>
             <Form.Check
               type='radio'
-              label='PayPal or Credit Card'
+              label='PayPal'
               id='paypal'
               name='paymentMethod'
               checked
