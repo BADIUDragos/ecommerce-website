@@ -1,12 +1,69 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { Table, Button } from "react-bootstrap";
+import { Table, Button, Tabs, Tab } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { listOrders } from "../actions/orderActions";
-import moment from 'moment'
+import moment from "moment";
+
+function OrderTable({ filteredOrders }) {
+  return (
+    <Table striped bordered hover responsive className="table-sm">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>USER</th>
+          <th>DATE</th>
+          <th>TOTAL</th>
+          <th>PAID</th>
+          <th>SHIPPED</th>
+          <th>DELIVERED</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredOrders.map((order) => (
+          <tr key={order._id}>
+            <td>{order._id}</td>
+            <td>{order.user && order.user.name}</td>
+            <td>{moment(order.createdAt).format("MMMM Do, YYYY")}</td>
+            <td>${order.totalPrice}</td>
+            <td>
+              {order.isPaid ? (
+                moment(order.paidAt).format("MMMM Do, YYYY")
+              ) : (
+                <i className="fas fa-times" style={{ color: "red" }}></i>
+              )}
+            </td>
+            <td>
+              {order.isShipped ? (
+                moment(order.shippedAt).format("MMMM Do, YYYY")
+              ) : (
+                <i className="fas fa-times" style={{ color: "red" }}></i>
+              )}
+            </td>
+            <td>
+              {order.isDelivered ? (
+                moment(order.deliveredAt).format("MMMM Do, YYYY")
+              ) : (
+                <i className="fas fa-times" style={{ color: "red" }}></i>
+              )}
+            </td>
+            <td>
+              <LinkContainer to={`/order/${order._id}`}>
+                <Button variant="light" className="btn-sm">
+                  DETAILS
+                </Button>
+              </LinkContainer>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  );
+}
 
 function OrderListScreen() {
   const dispatch = useDispatch();
@@ -22,73 +79,50 @@ function OrderListScreen() {
     if (userInfo && userInfo.isAdmin) {
       dispatch(listOrders());
     } else {
-      navigate("/")
+      navigate("/");
     }
-
   }, [dispatch, navigate, userInfo]);
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <Message variant="danger">{error}</Message>;
+  }
 
   return (
     <div>
       <h1>Orders</h1>
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <Table striped bordered hover responsive className="table-sm">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>USER</th>
-              <th>DATE</th>
-              <th>TOTAL</th>
-              <th>PAID</th>
-              <th>SHIPPED</th>
-              <th>DELIVERED</th>
-              <th></th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order._id}>
-                <td>{order._id}</td>
-                <td>{order.user && order.user.name}</td>
-                <td>{moment(order.createdAt).format("MMMM Do, YYYY")}</td>
-                <td>${order.totalPrice}</td>
-                <td>
-                  {order.isPaid ? (
-                    moment(order.paidAt).format("MMMM Do, YYYY")
-                  ) : (
-                    <i className="fas fa-times" style={{ color: "red" }}></i>
-                  )}
-                </td>
-                <td>
-                  {order.isShipped ? (
-                    moment(order.shippedAt).format("MMMM Do, YYYY")
-                  ) : (
-                    <i className="fas fa-times" style={{ color: "red" }}></i>
-                  )}
-                </td>
-                <td>
-                  {order.isDelivered ? (
-                    moment(order.deliveredAt).format("MMMM Do, YYYY")
-                  ) : (
-                    <i className="fas fa-times" style={{ color: "red" }}></i>
-                  )}
-                </td>
-                <td>
-                  <LinkContainer to={`/order/${order._id}`}>
-                    <Button variant='light' className="btn-sm">
-                      DETAILS
-                    </Button>
-                  </LinkContainer>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
+      <Tabs defaultActiveKey="toShip" id="orders-tabs">
+        <Tab eventKey="toShip" title="To Ship">
+          <OrderTable
+            filteredOrders={orders
+              .filter((order) => !order.isShipped)
+              .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))}
+          />
+        </Tab>
+        <Tab eventKey="toDeliver" title="To Deliver">
+          <OrderTable
+            filteredOrders={orders
+              .filter((order) => order.isShipped && !order.isDelivered)
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))}
+          />
+        </Tab>
+        <Tab eventKey="delivered" title="Delivered">
+          <OrderTable
+            filteredOrders={orders
+              .filter((order) => order.isShipped && order.isDelivered)
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))}
+          />
+        </Tab>
+        <Tab eventKey="allOrders" title="All Orders">
+          <OrderTable
+            filteredOrders={orders
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))}
+          />
+        </Tab>
+      </Tabs>
     </div>
   );
 }
