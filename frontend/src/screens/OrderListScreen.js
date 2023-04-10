@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { Table, Button, Tabs, Tab, FormControl } from "react-bootstrap";
+import { Pagination } from 'react-bootstrap';
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
@@ -9,7 +10,64 @@ import { listOrders } from "../actions/orderActions";
 import moment from "moment";
 
 function OrderTable({ filteredOrders }) {
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
+
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredOrders.slice(
+    indexOfFirstOrder,
+    indexOfLastOrder
+  );
+
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+
+  const onPageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPaginationItems = () => {
+    const paginationItems = [];
+
+    if (currentPage > 1) {
+      paginationItems.push(
+        <Pagination.First key="first" onClick={() => onPageChange(1)} />
+      );
+      paginationItems.push(
+        <Pagination.Prev key="prev" onClick={() => onPageChange(currentPage - 1)} />
+      );
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (Math.abs(currentPage - i) <= 2 || i === 1 || i === totalPages) {
+        paginationItems.push(
+          <Pagination.Item
+            key={i}
+            active={i === currentPage}
+            onClick={() => onPageChange(i)}
+          >
+            {i}
+          </Pagination.Item>
+        );
+      }
+    }
+
+    if (currentPage < totalPages) {
+      paginationItems.push(
+        <Pagination.Next key="next" onClick={() => onPageChange(currentPage + 1)} />
+      );
+      paginationItems.push(
+        <Pagination.Last key="last" onClick={() => onPageChange(totalPages)} />
+      );
+    }
+
+    return paginationItems;
+  };
+
+
   return (
+    <>
     <Table striped bordered hover responsive className="table-sm">
       <thead>
         <tr>
@@ -24,7 +82,7 @@ function OrderTable({ filteredOrders }) {
         </tr>
       </thead>
       <tbody>
-        {filteredOrders.map((order) => (
+        {currentOrders.map((order) => (
           <tr key={order._id}>
             <td>{order._id}</td>
             <td>{order.user && order.user.name}</td>
@@ -62,7 +120,9 @@ function OrderTable({ filteredOrders }) {
         ))}
       </tbody>
     </Table>
-  );
+    <Pagination>{renderPaginationItems()}</Pagination>
+ </>
+);
 }
 
 function OrderListScreen() {
