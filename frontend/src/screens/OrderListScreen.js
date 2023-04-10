@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { Table, Button, Tabs, Tab } from "react-bootstrap";
+import { Table, Button, Tabs, Tab, FormControl } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
@@ -69,6 +69,8 @@ function OrderListScreen() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [search, setSearch] = useState("");
+
   const orderList = useSelector((state) => state.orderList);
   const { loading, error, orders } = orderList;
 
@@ -83,6 +85,15 @@ function OrderListScreen() {
     }
   }, [dispatch, navigate, userInfo]);
 
+  const filteredOrders = (orders) => {
+    return orders.filter((order) =>
+      order.user && order.user.name
+        ? order.user.name.toLowerCase().includes(search.toLowerCase())
+        : false
+    );
+  };
+
+
   if (loading) {
     return <Loader />;
   }
@@ -94,32 +105,47 @@ function OrderListScreen() {
   return (
     <div>
       <h1>Orders</h1>
+      <FormControl
+        className="mb-3"
+        type="text"
+        placeholder="Search by User"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
       <Tabs defaultActiveKey="toShip" id="orders-tabs">
         <Tab eventKey="toShip" title="To Ship">
-          <OrderTable
-            filteredOrders={orders
-              .filter((order) => !order.isShipped)
-              .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))}
+        <OrderTable
+            filteredOrders={filteredOrders(
+              orders
+                .filter((order) => !order.isShipped)
+                .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+            )}
           />
         </Tab>
         <Tab eventKey="toDeliver" title="To Deliver">
           <OrderTable
-            filteredOrders={orders
+            filteredOrders={filteredOrders(
+              orders
               .filter((order) => order.isShipped && !order.isDelivered)
-              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))}
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              )}
           />
         </Tab>
         <Tab eventKey="delivered" title="Delivered">
           <OrderTable
-            filteredOrders={orders
+            filteredOrders={filteredOrders(
+              orders
               .filter((order) => order.isShipped && order.isDelivered)
-              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))}
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              )}
           />
         </Tab>
         <Tab eventKey="allOrders" title="All Orders">
           <OrderTable
-            filteredOrders={orders
-              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))}
+            filteredOrders={filteredOrders(
+              orders
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              )}
           />
         </Tab>
       </Tabs>
