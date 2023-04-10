@@ -93,9 +93,8 @@ function OrderListScreen() {
     );
   };
 
-
   if (loading) {
-    return <Loader />;
+    return <Loader />
   }
 
   if (error) {
