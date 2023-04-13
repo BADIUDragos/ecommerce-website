@@ -17,9 +17,6 @@ const userInfoFromStorage = localStorage.getItem('userInfo') ?
 const shippingAddressFromStorage = localStorage.getItem('shippingAddress') ?
     JSON.parse(localStorage.getItem('shippingAddress')) : {}
 
-const paymentMethodFromStorage = localStorage.getItem('paymentMethod') ?
-    JSON.parse(localStorage.getItem('paymentMethod')) : {}
-
 const store = configureStore({
     reducer: {
         productList: productListReducer,
@@ -56,7 +53,7 @@ const store = configureStore({
     },
     middleware: [thunk],
     preloadedState: {
-        cart: {cartItems: cartItemsFromStorage, shippingAddress: shippingAddressFromStorage, paymentMethod: paymentMethodFromStorage},
+        cart: {cartItems: cartItemsFromStorage, shippingAddress: shippingAddressFromStorage},
         userLogin: {userInfo: userInfoFromStorage},
     },
     devTools: true

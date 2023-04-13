@@ -28,7 +28,7 @@ function ShippingScreen() {
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(saveShippingAddress({ address, city, postalCode }));
-    navigate("/payment");
+    navigate("/placeorder");
   };
 
   return (

@@ -5,95 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import CheckoutSteps from "../components/CheckoutSteps";
-import { createOrder, getTotal, getPayPalInfo } from "../actions/orderActions";
+import { createOrder, getTotal } from "../actions/orderActions";
 import { ORDER_CREATE_RESET, ORDER_CREATE_SUCCESS } from "../constants/orderConstants";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
-function PayPalPayment(props) {
-  const { cart, prices } = props;
-  const dispatch = useDispatch();
-
-  const navigate = useNavigate();
-
-  const orderCreate = useSelector((state) => state.orderCreate);
-  const { error:errorCreateOrder } = orderCreate;
-
-  const userDetails = useSelector((state) => state.userDetails);
-
-  useEffect(() => {
-    if (!userDetails){
-      navigate('/')
-    }
-    dispatch(getPayPalInfo());
-  }, [dispatch, navigate, userDetails]);
-
-  if (!cart.paymentMethod) {
-    navigate("/payment");
-  }
-
-  const { error, loading, info } = useSelector(
-    (state) => state.orderPayPalInfo
-  );
-  const { client_id = 0, currency = 0 } = info || {};
-  const { subtotal = 0, shipping = 0, tax = 0, total = 0 } = prices || {};
-
-  const successPaymentHandler = async (paymentResult) => {
-    const createOrderResult = await dispatch(
-      createOrder({
-        orderItems: cart.cartItems,
-        shippingAddress: cart.shippingAddress,
-        paymentMethod: cart.paymentMethod,
-        itemsPrice: subtotal,
-        shippingPrice: shipping,
-        taxPrice: tax,
-        totalPrice: total,
-      })
-    );
-  
-    if (createOrderResult.type === ORDER_CREATE_SUCCESS) {
-      navigate(`/order/${createOrderResult.payload._id}`);
-      dispatch({ type: ORDER_CREATE_RESET });
-    }
-  };
-
-  if (loading & !info) return <Loader />;
-  if (error) return <Message variant="danger">{error}</Message>;
-  if (errorCreateOrder) return <Message variant="danger">{error}</Message>;
-
-  return (
-    <PayPalScriptProvider
-      options={{
-        "client-id": client_id,
-        currency: currency,
-        "disable-funding": "card",
-      }}
-    >
-      <PayPalButtons
-        createOrder={(data, actions) => {
-          return actions.order
-            .create({
-              purchase_units: [
-                {
-                  amount: {
-                    value: total,
-                  },
-                },
-              ],
-            })
-            .then((orderId) => {
-              // Your code here after create the order
-              return orderId;
-            });
-        }}
-        onApprove={(data, actions) => {
-          return actions.order.capture().then(function (details) {
-            successPaymentHandler(details);
-          });
-        }}
-      />
-    </PayPalScriptProvider>
-  );
-}
 
 function OrderSummary(props) {
   const dispatch = useDispatch();
@@ -151,7 +65,7 @@ function OrderSummary(props) {
         </ListGroup.Item>
 
         <ListGroup.Item>
-          <PayPalPayment total={total} cart={cart} prices={prices} />
+         
         </ListGroup.Item>
       </ListGroup>
     </Card>
@@ -175,13 +89,6 @@ function PlaceOrderScreen() {
                 {"   "}
                 {cart.shippingAddress.postalCode},{"   "}
                 {"Canada"}
-              </p>
-            </ListGroup.Item>
-            <ListGroup.Item>
-              <h2>Payment Method</h2>
-              <p>
-                <strong>Method: </strong>
-                {cart.paymentMethod}
               </p>
             </ListGroup.Item>
             <ListGroup.Item>
