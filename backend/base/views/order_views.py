@@ -1,5 +1,8 @@
 import decimal
 
+import stripe
+from stripe.error import StripeError
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -8,7 +11,8 @@ from rest_framework.response import Response
 from datetime import datetime
 
 from base.models import Product, Order, OrderItem, ShippingAddress
-from base.serializers import OrderSerializer, BillSerializer, PayPalSerializer
+from base.serializers import OrderSerializer, BillSerializer, StripeSerializer, StripePaymentIntentResponseSerializer, \
+    StripePaymentIntentSerializer
 
 from base.signals import order_created, order_shipped, order_delivered
 
@@ -26,7 +30,6 @@ def addOrderItems(request):
 
         order = Order.objects.create(
             user=user,
-            paymentMethod=data['paymentMethod'],
             itemsPrice=data['itemsPrice'],
             taxPrice=data['taxPrice'],
             shippingPrice=data['shippingPrice'],
@@ -99,6 +102,7 @@ def getOrders(request):
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
 
+
 @api_view(['PUT'])
 @permission_classes([IsAdminUser])
 def updateOrderToShipped(request, pk):
@@ -111,6 +115,7 @@ def updateOrderToShipped(request, pk):
     order_shipped.send(sender=Order, order=order)
 
     return Response('Order was delivered')
+
 
 @api_view(['PUT'])
 @permission_classes([IsAdminUser])
@@ -126,6 +131,7 @@ def updateOrderToDelivered(request, pk):
     order_delivered.send(sender=Order, order=order)
 
     return Response('Order was delivered')
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -160,10 +166,32 @@ def getPrices(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getPayPalInfo(request):
+def get_stripe_info(request):
 
-    client_id = "AQePZy-SSCXcibd6BMmMP-ps5m1w_4xaQISOPBjcOfmOZ1UuHebHJaCKhUbvfm9AWM-BdzgdHIVjpkAY"
-    currency = "CAD"
+    stripe_public = "pk_test_51MvqTOJMCbcrYDEx1I6IVgjw0Bfdu349ua1j2gA3vn3rErY1AYwSc7Pqdq7yVnlwbVhbZPEGlNherPKcEJW4JSvF00m1O9F2vT"
 
-    serializer = PayPalSerializer({'client_id': client_id, 'currency': currency})
+    serializer = StripeSerializer({'stripe_public': stripe_public})
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_payment_intent(request):
+    serializer = StripePaymentIntentSerializer(data=request.data)
+    if serializer.is_valid():
+        amount = int(serializer.validated_data['amount'] * 100)
+        currency = serializer.validated_data['currency']
+        description = serializer.validated_data['description']
+
+        try:
+            payment_intent = stripe.PaymentIntent.create(
+                amount=amount,
+                currency=currency,
+                description=description,
+            )
+            response_serializer = StripePaymentIntentResponseSerializer(payment_intent)
+            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        except StripeError as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

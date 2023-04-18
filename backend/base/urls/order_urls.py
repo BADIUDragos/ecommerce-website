@@ -7,7 +7,8 @@ urlpatterns = [
     path('add/', views.addOrderItems, name='orders-add'),
     path('myorders/', views.getMyOrders, name='my-orders'),
     path('total/', views.getPrices, name='get-prices'),
-    path('paypal/', views.getPayPalInfo, name='get-paypal-info'),
+    path('stripe/', views.get_stripe_info, name='get-stripe-info'),
+    path('payment-intent/', views.create_payment_intent, name='create-payment-intent'),
 
     path('<str:pk>/', views.getOrderById, name='user-order'),
     path('<str:pk>/shipped/', views.updateOrderToShipped, name='shipped-order'),

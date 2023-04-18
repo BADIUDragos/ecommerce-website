@@ -28,9 +28,9 @@ import {
     ORDER_GET_TOTAL_SUCCESS,
     ORDER_GET_TOTAL_FAIL,
 
-    ORDER_GET_PAYPAL_INFO_REQUEST,
-    ORDER_GET_PAYPAL_INFO_SUCCESS,
-    ORDER_GET_PAYPAL_INFO_FAIL,
+    ORDER_GET_STRIPE_INFO_REQUEST,
+    ORDER_GET_STRIPE_INFO_SUCCESS,
+    ORDER_GET_STRIPE_INFO_FAIL,
   } from "../constants/orderConstants";
 
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
@@ -299,12 +299,6 @@ export const getTotal = (items) => async(dispatch, getState) => {
           type: ORDER_GET_TOTAL_SUCCESS,
           payload: data
       });
-
-      // dispatch({
-      //     type: CART_CLEAR_ITEMS
-      // });
-
-      // localStorage.removeItem('cartItems');
   } catch (error) {
       dispatch({
           type: ORDER_GET_TOTAL_FAIL,
@@ -316,11 +310,11 @@ export const getTotal = (items) => async(dispatch, getState) => {
   }
 }
 
-export const getPayPalInfo = () => async(dispatch, getState) => {
+export const getStripeInfo = () => async(dispatch, getState) => {
   try {
       
       dispatch({
-          type: ORDER_GET_PAYPAL_INFO_REQUEST
+          type: ORDER_GET_STRIPE_INFO_REQUEST
       });
 
       const {
@@ -334,16 +328,16 @@ export const getPayPalInfo = () => async(dispatch, getState) => {
           }
       };
 
-      const { data } = await axios.get(`/api/orders/paypal/`, config);
+      const { data } = await axios.get(`/api/orders/stripe/`, config);
 
       dispatch({
-          type: ORDER_GET_PAYPAL_INFO_SUCCESS,
+          type: ORDER_GET_STRIPE_INFO_SUCCESS,
           payload: data
       });
 
   } catch (error) {
       dispatch({
-          type: ORDER_GET_PAYPAL_INFO_FAIL,
+          type: ORDER_GET_STRIPE_INFO_FAIL,
           payload:
             error.response && error.response.data.detail
               ? error.response.data.detail
@@ -351,3 +345,33 @@ export const getPayPalInfo = () => async(dispatch, getState) => {
       });
   }
 }
+
+export const createPaymentIntent = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: 'CHECKOUT_SESSION_REQUEST' });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userInfo.token}`
+        }
+    };
+
+    const { data } = await axios.post('/api/orders/payment-intent/', config);
+
+    dispatch({ type: 'CHECKOUT_SESSION_SUCCESS' });
+    return data;
+  } catch (error) {
+    dispatch({
+      type: 'CHECKOUT_SESSION_FAIL',
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};

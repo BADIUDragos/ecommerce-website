@@ -1,13 +1,73 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Row, Col, ListGroup, Image, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import CheckoutSteps from "../components/CheckoutSteps";
-import { createOrder, getTotal } from "../actions/orderActions";
-import { ORDER_CREATE_RESET, ORDER_CREATE_SUCCESS } from "../constants/orderConstants";
+import {
+  createOrder,
+  getTotal,
+  getStripeInfo,
+  createPaymentIntent,
+} from "../actions/orderActions";
+import {
+  ORDER_CREATE_RESET,
+  ORDER_CREATE_SUCCESS,
+} from "../constants/orderConstants";
+import { loadStripe } from "@stripe/stripe-js";
+import CheckoutForm from "../components/CheckoutForm";
+import { Elements } from "@stripe/react-stripe-js";
 
+function Payment() {
+  const [stripePromise, setStripePromise] = useState(null);
+  const [clientSecret, setClientSecret] = useState("");
+  const [stripeFetched, setStripeFetched] = useState(false);
+  const { info } = useSelector((state) => state.orderStripeInfo);
+  const { stripe_public } = info || {};
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(getStripeInfo());
+      setStripeFetched(true);
+    };
+
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (stripe_public && stripeFetched && !stripePromise) {
+      const loadStripePromise = async () => {
+        const stripe = await loadStripe(stripe_public);
+        setStripePromise(stripe);
+      };
+
+      loadStripePromise();
+    }})
+
+    useEffect(() => {
+      const getClientSecret = async () => {
+        if (stripePromise) {
+          const paymentIntentData = dispatch(createPaymentIntent());
+          setClientSecret(paymentIntentData.client_secret);
+        }
+      };
+      getClientSecret();
+  }, [stripePromise, dispatch]);
+  
+
+  return (
+    <>
+      {stripePromise && clientSecret && (
+        <Elements stripe={stripePromise} options={{ clientSecret }}>
+          <CheckoutForm />
+        </Elements>
+      )}
+    </>
+  );
+}
 
 function OrderSummary(props) {
   const dispatch = useDispatch();
@@ -62,10 +122,6 @@ function OrderSummary(props) {
             <Col>Total:</Col>
             <Col>${total}</Col>
           </Row>
-        </ListGroup.Item>
-
-        <ListGroup.Item>
-         
         </ListGroup.Item>
       </ListGroup>
     </Card>
@@ -130,6 +186,7 @@ function PlaceOrderScreen() {
 
         <Col md={4}>
           <OrderSummary cart={cart} />
+          <Payment />
         </Col>
       </Row>
     </div>

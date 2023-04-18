@@ -95,21 +95,6 @@ function OrderScreen() {
               )}
             </ListGroup.Item>
             <ListGroup.Item>
-              <h2>Payment Method</h2>
-              <p>
-                <strong>Method: </strong>
-                {order.paymentMethod}
-              </p>
-
-              {order.isPaid ? (
-                <Message variant="success">
-                  Paid on {moment(order.paidAt).format("MMMM Do, YYYY")}
-                </Message>
-              ) : (
-                <Message variant="warning">Not paid</Message>
-              )}
-            </ListGroup.Item>
-            <ListGroup.Item>
               <h2>Order Items</h2>
               {order.orderItems.length === 0 ? (
                 <Message variant="info">Order is empty</Message>

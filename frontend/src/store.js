@@ -6,7 +6,7 @@ import { productListReducer, productDetailsReducer, productDeleteReducer, produc
 import { cartReducer } from './reducers/cartReducers'
 import { userLoginReducer, userRegisterReducer, userDetailsReducer, userUpdateProfileReducer, 
         userListReducer, userDeleteReducer, userUpdateReducer, userPasswordResetReducer, userPasswordResetReducerValidateToken, userPasswordResetReducerChange } from './reducers/userReducers'
-import { orderCreateReducer, orderDetailsReducer, orderListMyReducer, orderListReducer, orderShippedReducer, orderDeliveredReducer, orderTotalReducer, orderPayPalInfoReducer } from './reducers/orderReducers'
+import { orderCreateReducer, orderDetailsReducer, orderListMyReducer, orderListReducer, orderShippedReducer, orderDeliveredReducer, orderTotalReducer, orderStripeInfoReducer, checkoutSessionReducer } from './reducers/orderReducers'
 
 const cartItemsFromStorage = localStorage.getItem('cartItems') ?
     JSON.parse(localStorage.getItem('cartItems')) : []
@@ -29,6 +29,7 @@ const store = configureStore({
         productTop: productTopReducer,
 
         cart: cartReducer,
+        checkoutSession: checkoutSessionReducer,
         
         userLogin: userLoginReducer,
         userRegister: userRegisterReducer,
@@ -48,7 +49,7 @@ const store = configureStore({
         orderShipped: orderShippedReducer,
         orderDelivered: orderDeliveredReducer,
         orderTotal: orderTotalReducer,
-        orderPayPalInfo: orderPayPalInfoReducer,
+        orderStripeInfo: orderStripeInfoReducer,
         
     },
     middleware: [thunk],

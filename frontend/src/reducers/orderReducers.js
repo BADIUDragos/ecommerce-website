@@ -31,9 +31,13 @@ import {
   ORDER_GET_TOTAL_SUCCESS,
   ORDER_GET_TOTAL_FAIL,
 
-  ORDER_GET_PAYPAL_INFO_REQUEST,
-  ORDER_GET_PAYPAL_INFO_SUCCESS,
-  ORDER_GET_PAYPAL_INFO_FAIL,
+  ORDER_GET_STRIPE_INFO_REQUEST,
+  ORDER_GET_STRIPE_INFO_SUCCESS,
+  ORDER_GET_STRIPE_INFO_FAIL,
+  
+  CHECKOUT_SESSION_REQUEST,
+  CHECKOUT_SESSION_SUCCESS,
+  CHECKOUT_SESSION_FAIL
 } from "../constants/orderConstants";
 
 export const orderCreateReducer = (state = {}, action) => {
@@ -214,16 +218,16 @@ export const orderTotalReducer = (state = {}, action) => {
   }
 };
 
-export const orderPayPalInfoReducer = (state = {}, action) => {
+export const orderStripeInfoReducer = (state = {}, action) => {
   switch (action.type) {
-    case ORDER_GET_PAYPAL_INFO_REQUEST:
+    case ORDER_GET_STRIPE_INFO_REQUEST:
       return {
         ...state,
         loading: true,
         success: false,
       };
     
-    case ORDER_GET_PAYPAL_INFO_SUCCESS:
+    case ORDER_GET_STRIPE_INFO_SUCCESS:
       return {
         ...state,
         loading: false,
@@ -232,7 +236,7 @@ export const orderPayPalInfoReducer = (state = {}, action) => {
         info: action.payload
       };
     
-    case ORDER_GET_PAYPAL_INFO_FAIL:
+    case ORDER_GET_STRIPE_INFO_FAIL:
       return {
         ...state,
         loading: false,
@@ -245,4 +249,16 @@ export const orderPayPalInfoReducer = (state = {}, action) => {
   }
 };
 
+export const checkoutSessionReducer = (state = {}, action) => {
+  switch(action.type){
+    case CHECKOUT_SESSION_REQUEST:
+      return{ loading: true};
+    case CHECKOUT_SESSION_SUCCESS:
+      return{ loading: false, session: action.payload};
+    case CHECKOUT_SESSION_FAIL:
+      return{ loading: false, error: action.payload};
+    default:
+      return state;
+  }
+}
 
