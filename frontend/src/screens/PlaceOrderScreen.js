@@ -19,7 +19,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "../components/CheckoutForm";
 import { Elements } from "@stripe/react-stripe-js";
 
-function Payment() {
+function Payment(amount) {
   const [stripePromise, setStripePromise] = useState(null);
   const [clientSecret, setClientSecret] = useState("");
   const [stripeFetched, setStripeFetched] = useState(false);
@@ -50,7 +50,7 @@ function Payment() {
     useEffect(() => {
       const getClientSecret = async () => {
         if (stripePromise) {
-          const paymentIntentData = dispatch(createPaymentIntent());
+          const paymentIntentData = dispatch(createPaymentIntent(amount));
           setClientSecret(paymentIntentData.client_secret);
         }
       };
@@ -90,41 +90,44 @@ function OrderSummary(props) {
   if (error) return <Message variant="danger">{error}</Message>;
 
   return (
-    <Card>
-      <ListGroup variant="flush">
-        <ListGroup.Item>
-          <h2>Order Summary</h2>
-        </ListGroup.Item>
+    <>
+      <Card>
+        <ListGroup variant="flush">
+          <ListGroup.Item>
+            <h2>Order Summary</h2>
+          </ListGroup.Item>
 
-        <ListGroup.Item>
-          <Row>
-            <Col>Subtotal:</Col>
-            <Col>${subtotal}</Col>
-          </Row>
-        </ListGroup.Item>
+          <ListGroup.Item>
+            <Row>
+              <Col>Subtotal:</Col>
+              <Col>${subtotal}</Col>
+            </Row>
+          </ListGroup.Item>
 
-        <ListGroup.Item>
-          <Row>
-            <Col>Shipping:</Col>
-            <Col>${shipping}</Col>
-          </Row>
-        </ListGroup.Item>
+          <ListGroup.Item>
+            <Row>
+              <Col>Shipping:</Col>
+              <Col>${shipping}</Col>
+            </Row>
+          </ListGroup.Item>
 
-        <ListGroup.Item>
-          <Row>
-            <Col>Taxes:</Col>
-            <Col>${tax}</Col>
-          </Row>
-        </ListGroup.Item>
+          <ListGroup.Item>
+            <Row>
+              <Col>Taxes:</Col>
+              <Col>${tax}</Col>
+            </Row>
+          </ListGroup.Item>
 
-        <ListGroup.Item>
-          <Row>
-            <Col>Total:</Col>
-            <Col>${total}</Col>
-          </Row>
-        </ListGroup.Item>
-      </ListGroup>
-    </Card>
+          <ListGroup.Item>
+            <Row>
+              <Col>Total:</Col>
+              <Col>${total}</Col>
+            </Row>
+          </ListGroup.Item>
+        </ListGroup>
+      </Card>
+      <Payment amount={total}/>
+    </>
   );
 }
 
@@ -186,7 +189,6 @@ function PlaceOrderScreen() {
 
         <Col md={4}>
           <OrderSummary cart={cart} />
-          <Payment />
         </Col>
       </Row>
     </div>

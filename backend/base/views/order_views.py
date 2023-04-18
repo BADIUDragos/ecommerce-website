@@ -3,6 +3,8 @@ import decimal
 import stripe
 from stripe.error import StripeError
 
+from backend.settings import STRIPE_SECRET
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -11,8 +13,7 @@ from rest_framework.response import Response
 from datetime import datetime
 
 from base.models import Product, Order, OrderItem, ShippingAddress
-from base.serializers import OrderSerializer, BillSerializer, StripeSerializer, StripePaymentIntentResponseSerializer, \
-    StripePaymentIntentSerializer
+from base.serializers import OrderSerializer, BillSerializer, StripeSerializer, StripePaymentIntentResponseSerializer
 
 from base.signals import order_created, order_shipped, order_delivered
 
@@ -175,23 +176,22 @@ def get_stripe_info(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def create_payment_intent(request):
-    serializer = StripePaymentIntentSerializer(data=request.data)
-    if serializer.is_valid():
-        amount = int(serializer.validated_data['amount'] * 100)
-        currency = serializer.validated_data['currency']
-        description = serializer.validated_data['description']
 
-        try:
-            payment_intent = stripe.PaymentIntent.create(
-                amount=amount,
-                currency=currency,
-                description=description,
-            )
-            response_serializer = StripePaymentIntentResponseSerializer(payment_intent)
-            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
-        except StripeError as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    data = request.data
+    amount = int(float(data['amount']) * 100)
+    currency = 'CAD'
+    description = ''
+
+    stripe.api_key = STRIPE_SECRET
+
+    try:
+        payment_intent = stripe.PaymentIntent.create(
+            amount=amount,
+            currency=currency,
+            description=description,
+        )
+        response_serializer = StripePaymentIntentResponseSerializer(payment_intent)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+    except StripeError as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)

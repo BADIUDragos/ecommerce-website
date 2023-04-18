@@ -346,7 +346,7 @@ export const getStripeInfo = () => async(dispatch, getState) => {
   }
 }
 
-export const createPaymentIntent = () => async (dispatch, getState) => {
+export const createPaymentIntent = (amount) => async (dispatch, getState) => {
   try {
     dispatch({ type: 'CHECKOUT_SESSION_REQUEST' });
 
@@ -360,8 +360,8 @@ export const createPaymentIntent = () => async (dispatch, getState) => {
             Authorization: `Bearer ${userInfo.token}`
         }
     };
-
-    const { data } = await axios.post('/api/orders/payment-intent/', config);
+    console.log(amount)
+    const { data } = await axios.post('/api/orders/payment-intent/', amount, config);
 
     dispatch({ type: 'CHECKOUT_SESSION_SUCCESS' });
     return data;
