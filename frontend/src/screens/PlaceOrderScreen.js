@@ -60,14 +60,13 @@ function Payment(amount) {
     };
     getClientSecret();
   }, [amount, stripePromise, dispatch]);
-  
-console.log(!!stripePromise && !!clientSecret);
-console.log(stripePromise, 'STRIPE RESULT');
-console.log(clientSecret);
+
   return (
     <>
+      <h2>Payment</h2>
+      {!clientSecret && <Loader />}
       {stripePromise && clientSecret && (
-        
+          
         <Elements stripe={stripePromise} options={{ clientSecret }}>
           <PaymentElement />
         </Elements>
@@ -98,7 +97,7 @@ function OrderSummary(props) {
 
   return (
     <>
-      <Card>
+      <Card className="mb-3">
         <ListGroup variant="flush">
           <ListGroup.Item>
             <h2>Order Summary</h2>
