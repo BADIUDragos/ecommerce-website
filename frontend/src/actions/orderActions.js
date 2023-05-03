@@ -360,7 +360,6 @@ export const createPaymentIntent = (amount) => async (dispatch, getState) => {
             Authorization: `Bearer ${userInfo.token}`
         }
     };
-    console.log(amount)
     const { data } = await axios.post('/api/orders/payment-intent/', amount, config);
 
     dispatch({ type: 'CHECKOUT_SESSION_SUCCESS' });

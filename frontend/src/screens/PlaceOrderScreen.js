@@ -16,8 +16,7 @@ import {
   ORDER_CREATE_SUCCESS,
 } from "../constants/orderConstants";
 import { loadStripe } from "@stripe/stripe-js";
-import CheckoutForm from "../components/CheckoutForm";
-import { Elements } from "@stripe/react-stripe-js";
+import { Elements, PaymentElement } from "@stripe/react-stripe-js";
 
 function Payment(amount) {
   const [stripePromise, setStripePromise] = useState(null);
@@ -28,15 +27,18 @@ function Payment(amount) {
 
   const dispatch = useDispatch();
 
+  // Fetch public key
   useEffect(() => {
     const fetchData = async () => {
-      await dispatch(getStripeInfo());
+      const myKey = await dispatch(getStripeInfo());
       setStripeFetched(true);
     };
 
     fetchData();
   }, [dispatch]);
 
+
+  // Load fn from stripe
   useEffect(() => {
     if (stripe_public && stripeFetched && !stripePromise) {
       const loadStripePromise = async () => {
@@ -45,24 +47,29 @@ function Payment(amount) {
       };
 
       loadStripePromise();
-    }})
+    }
+  }, [stripe_public, stripeFetched, stripePromise]);
 
-    useEffect(() => {
-      const getClientSecret = async () => {
-        if (stripePromise) {
-          const paymentIntentData = dispatch(createPaymentIntent(amount));
-          setClientSecret(paymentIntentData.client_secret);
-        }
-      };
-      getClientSecret();
-  }, [stripePromise, dispatch]);
+
+  useEffect(() => {
+    const getClientSecret = async () => {
+      if (stripePromise) {
+        const paymentIntentData = await dispatch(createPaymentIntent(amount));
+        setClientSecret(paymentIntentData.client_secret);
+      }
+    };
+    getClientSecret();
+  }, [amount, stripePromise, dispatch]);
   
-
+console.log(!!stripePromise && !!clientSecret);
+console.log(stripePromise, 'STRIPE RESULT');
+console.log(clientSecret);
   return (
     <>
       {stripePromise && clientSecret && (
+        
         <Elements stripe={stripePromise} options={{ clientSecret }}>
-          <CheckoutForm />
+          <PaymentElement />
         </Elements>
       )}
     </>
