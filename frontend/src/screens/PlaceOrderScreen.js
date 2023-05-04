@@ -12,10 +12,7 @@ import {
   getStripeInfo,
   createPaymentIntent,
 } from "../actions/orderActions";
-import {
-  ORDER_CREATE_RESET,
-  ORDER_CREATE_SUCCESS,
-} from "../constants/orderConstants";
+
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
