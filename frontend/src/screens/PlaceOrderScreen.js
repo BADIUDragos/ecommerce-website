@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import CheckoutSteps from "../components/CheckoutSteps";
+import CheckoutForm from "../components/CheckoutForm";
 import {
   createOrder,
   getTotal,
@@ -16,7 +17,7 @@ import {
   ORDER_CREATE_SUCCESS,
 } from "../constants/orderConstants";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, PaymentElement } from "@stripe/react-stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 
 function Payment(amount) {
   const [stripePromise, setStripePromise] = useState(null);
@@ -35,11 +36,8 @@ function Payment(amount) {
     };
 
     fetchData();
-  }, [dispatch]);
 
-
-  // Load fn from stripe
-  useEffect(() => {
+    // Load fn from stripe
     if (stripe_public && stripeFetched && !stripePromise) {
       const loadStripePromise = async () => {
         const stripe = await loadStripe(stripe_public);
@@ -48,10 +46,7 @@ function Payment(amount) {
 
       loadStripePromise();
     }
-  }, [stripe_public, stripeFetched, stripePromise]);
 
-
-  useEffect(() => {
     const getClientSecret = async () => {
       if (stripePromise) {
         const paymentIntentData = await dispatch(createPaymentIntent(amount));
@@ -59,7 +54,8 @@ function Payment(amount) {
       }
     };
     getClientSecret();
-  }, [amount, stripePromise, dispatch]);
+  }, [dispatch, amount, stripePromise, stripe_public, stripeFetched]);
+
 
   return (
     <>
@@ -68,7 +64,7 @@ function Payment(amount) {
       {stripePromise && clientSecret && (
           
         <Elements stripe={stripePromise} options={{ clientSecret }}>
-          <PaymentElement />
+          <CheckoutForm clientSecret={clientSecret}/>
         </Elements>
       )}
     </>
