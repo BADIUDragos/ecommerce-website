@@ -76,7 +76,13 @@ function OrderScreen() {
                 {order.shippingAddress.postalCode},{"   "}
                 {"Canada"}
               </p>
-
+              {order.isPaid ? (
+                <Message variant="success">
+                  Paid on {moment(order.paidAt).format("MMMM Do, YYYY")}
+                </Message>
+              ) : (
+                <Message variant="warning">Not Paid</Message>
+              )}
               {order.isShipped ? (
                 <Message variant="success">
                   Shipped on{" "}
